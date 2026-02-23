@@ -2,15 +2,15 @@ def extraction(dcmt_text):
     '''
         extraction donnée sous forme {id;[mdp, nom, clé]}
     '''
-    ID = []
+    dico = {}
     with open(dcmt_text, 'r') as fichier:
         for lignes in fichier:
             lignes = lignes.strip()
             temp = lignes.split("*")
-            ID.append(temp)
-        return ID
-
-    pass
+            identifiant = temp[0]
+            infos = temp[1:]
+            dico[identifiant] = infos
+        return dico
 
 def verif_id():
     '''rentrée l'identifiant décrypter de l'utilsiateur avec verif de la tipo (ppas de lettre, limitre de lettre etc)
@@ -19,12 +19,23 @@ def verif_id():
 
 def verif_mdp():
     '''comme utilsiateur mais avec le mdp
-        '''
+    '''
     pass
 
-def decrypter():
+def decrypter(a_decrypter, cle):
     '''decrypter l'id et le mdp de l'identifiant avec la clé (clé cesar)
-        '''
-    pass
+    '''
+    lettre = 'abcdefghijklmnopqrstuvwxyz'
+    result = ''
+    if type(a_decrypter) is int:
+        for elem in str(a_decrypter):
+            temp = (int(elem) + int(cle)) % 10
+            result += str(temp)
+        return result
+    else:
+        for elem in a_decrypter.lower():
+            temp = (lettre.index(elem) + int(cle)) % 26
+            result += lettre[temp]
+        return result.capitalize()
 
-print(extraction("compte.txt"))
+
