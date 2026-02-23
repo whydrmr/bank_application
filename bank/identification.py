@@ -19,4 +19,6 @@ def decrypter():
         '''
     pass
 
+test = test
+
 
