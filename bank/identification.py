@@ -1,7 +1,15 @@
-def extraction():
+def extraction(dcmt_text):
     '''
         extraction donnée sous forme {id;[mdp, nom, clé]}
-                                       '''
+    '''
+    ID = []
+    with open(dcmt_text, 'r') as fichier:
+        for lignes in fichier:
+            lignes = lignes.strip()
+            temp = lignes.split("*")
+            ID.append(temp)
+        return ID
+
     pass
 
 def verif_id():
@@ -19,4 +27,4 @@ def decrypter():
         '''
     pass
 
-
+print(extraction("compte.txt"))
