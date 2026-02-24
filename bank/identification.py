@@ -45,11 +45,27 @@ def verif_id(id_decrypt, dico):
     return False
 
 
-def verif_mdp(id, mdp):
-    '''a determiner
-    comme verif_id mais avec le mdp (on a juste besoin de info (dico.value))
+#def verif_mdp(id, mdp):
+ #   '''a determiner
+  #  comme verif_id mais avec le mdp (on a juste besoin de info (dico.value))
+   # '''
+
+def verif_mdp(id_saisi, mdp_saisi, dico):
+    '''str x str x dict -> Bool
+    Vérifie si le mdp saisi correspond au mdp stocké après décryptage
+    pour l'identifiant.
     '''
-    pass
+    for id_crypte, info in dico.items():
+        cle = info[2]
+
+        if id_saisi == decrypter(id_crypte, cle):
+            mdp_crypte_stocke = info[0]
+            mdp_decrypt_stocke = decrypter(mdp_crypte_stocke, cle)
+            
+            if mdp_saisi == mdp_decrypt_stocke:
+                return True
+                
+    return False
 
 
 if __name__ == "__main__":
