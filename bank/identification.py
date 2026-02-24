@@ -12,6 +12,20 @@ def extraction(dcmt_text):
             dico[identifiant] = infos
     return dico
 
+def validation_typo(element, taille):
+    '''str x int -> bool
+    verifie la typo de chaque input pour le mdp et l'id
+    '''
+    if not element.isdigit():
+        print("Que des chiffres svp")
+        return False  # continue va retourne au debout de la boucle While en skippant tout le reste du code
+
+    if len(element) != taille:
+        print("Taille chaine de caractere incorrecte")
+        return False
+
+    return True
+
 
 def decrypter(a_decrypter, cle):
     """str x int -> str
@@ -20,9 +34,7 @@ def decrypter(a_decrypter, cle):
     lettre = "abcdefghijklmnopqrstuvwxyz"
     result = ""
     # Si c un nombre (id)
-    if str(
-        a_decrypter
-    ).isdigit():  # on va traiter que des str ducoup c'est une methode pour verifier que c bien des chiffres
+    if a_decrypter.isdigit():  # on va traiter que des str ducoup c'est une methode pour verifier que c bien des chiffres
         for elem in str(a_decrypter):
             temp = (int(elem) + int(cle)) % 10
             result += str(temp)
@@ -48,12 +60,6 @@ def verif_id(id_decrypt, dico):
     return False
 
 
-# def verif_mdp(id, mdp):
-#   '''a determiner
-#  comme verif_id mais avec le mdp (on a juste besoin de info (dico.value))
-# '''
-
-
 def verif_mdp(id_saisi, mdp_saisi, dico):
     """str x str x dict -> Bool
     Vérifie si le mdp saisi correspond au mdp stocké après décryptage
@@ -61,39 +67,44 @@ def verif_mdp(id_saisi, mdp_saisi, dico):
     """
     for id_crypte, info in dico.items():
         cle = info[2]
-
         if id_saisi == decrypter(id_crypte, cle):
             mdp_decrypt_stocke = decrypter(info[0], cle)
-
             if mdp_saisi == mdp_decrypt_stocke:
+                print(f" ---------- MDP valide, bienvenue {info[1]}! ----------")
                 return True
-
     return False
 
 
 if __name__ == "__main__":
     dico = extraction("compte.txt")
     i = 0
-    continuation = True
-    while continuation:
+    continuation_1 = True
+    print("+++++++++++++ Bienvenue dans la BANQUE +++++++++++++")
+    while continuation_1:
+        continuation_2 = True
         identifiant = input("Veuillez entrer votre ID : ")
-        if not identifiant.isdigit():
-            print("Que des chiffres svp")
-            continue  # continue va retourne au debout de la boucle While en skippant tout le reste du code
-
-        if len(identifiant) != 8:
-            print("Taille chaine de caractere incorrecte")
+        if not validation_typo(identifiant, 8):
             continue
-        if verif_id(
-            identifiant, dico
-        ):  # si l'utilisateur est trv, on verif son mdp MAIS ON A PAS RECUP LES INFOS DIRECT.. il faut retourner les chercher
-            print("ID valide")
-            mdp = input("Veuillez entrer votre mot de passe : ")
-            # fonction verif_mdp a faire avec verif caraceter/taille/tentative etc
+        if verif_id(identifiant, dico):  # si l'utilisateur est trv, on verif son mdp MAIS ON A PAS RECUP LES INFOS DIRECT.. il faut retourner les chercher
+            print("---------- ID valide ----------")
+            i = 0
+            while continuation_2:
+                mdp = input("Veuillez entrer votre MDP : ")
+                if not validation_typo(mdp, 6):
+                    continue
+                if verif_mdp(identifiant, mdp, dico): 
+                    continuation_1 = False
+                    continuation_2 = False
+                else:
+                    print("MDP incorrect")
+                    i += 1
+                    if i > 3:
+                        print("Trop d'essaies pour le mdp")
+                        continuation_2 = False
         else:
             print("ID incorrect")
             i += 1
             if i > 3:
-                print("Trop d'essaies... Adieu...")
-                continuation = False
-    print("Fermeture de la page de connexion.. Au revoir.")
+                print("Trop d'essaies...")
+                continuation_1 = False
+    print("---------- Fermeture de la page de connexion.. ----------")
