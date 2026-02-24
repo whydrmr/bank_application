@@ -63,8 +63,7 @@ def verif_mdp(id_saisi, mdp_saisi, dico):
         cle = info[2]
 
         if id_saisi == decrypter(id_crypte, cle):
-            mdp_crypte_stocke = info[0]
-            mdp_decrypt_stocke = decrypter(mdp_crypte_stocke, cle)
+            mdp_decrypt_stocke = decrypter(info[0], cle)
 
             if mdp_saisi == mdp_decrypt_stocke:
                 return True
