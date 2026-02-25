@@ -108,3 +108,8 @@ if __name__ == "__main__":
                 print("Trop d'essaies...")
                 continuation_1 = False
     print("---------- Fermeture de la page de connexion.. ----------")
+    
+    """ a faire : rework du systeme de cryptage avec notament une cle de secu global pour decrypter globalement
+    le fichier ident.txt + changer systeme decryptage avec ord() et chr()
+    + vite fait opti boucle main
+    """
