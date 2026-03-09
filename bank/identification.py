@@ -1,3 +1,5 @@
+GLOBAL_KEY = 21
+
 def extraction(dcmt_text):
     """str -> dict
     extraction donnée sous forme {id;[mdp, nom, clé]}
@@ -31,22 +33,20 @@ def decrypter(a_decrypter, cle):
     """str x int -> str
     decrypter l'id et le mdp de l'identifiant avec la clé (clé cesar)
     """
-    lettre = "abcdefghijklmnopqrstuvwxyz"
     result = ""
-    # Si c un nombre (id)
+    cle = int(cle)    # Si c un nombre (id)
     if a_decrypter.isdigit():  # on va traiter que des str ducoup c'est une methode pour verifier que c bien des chiffres
-        for elem in str(a_decrypter):
-            temp = (int(elem) + int(cle)) % 10
-            result += str(temp)
+        for elem in a_decrypter:
+            result += chr((ord(elem) - ord('0') + cle) % 10 + ord('0'))
         return result
 
     # sinon c du texte (mdp)
     else:
         for elem in a_decrypter.lower():
-            if elem in lettre:
-                temp = (lettre.index(elem) + int(cle)) % 26
-                result += lettre[temp]
+            if 'a' <= elem <= 'z':
+                result += chr((ord(elem) - ord('a') + cle) % 26 + ord('a'))
         return result.capitalize()
+
 
 
 def verif_id(id_decrypt, dico):
@@ -54,7 +54,8 @@ def verif_id(id_decrypt, dico):
     rentrée l'identifiant décrypter de l'utilsiateur avec verif de la tipo (ppas de lettre, limitre de lettre etc)
     """
     for id_crypte, info in dico.items():
-        cle = info[2]
+        cle_user = decrypter(info[2], GLOBAL_KEY)
+        cle = int(cle_user) + GLOBAL_KEY
         if id_decrypt == decrypter(id_crypte, cle):
             return True
     return False
@@ -66,17 +67,19 @@ def verif_mdp(id_saisi, mdp_saisi, dico):
     pour l'identifiant.
     """
     for id_crypte, info in dico.items():
-        cle = info[2]
+        cle_user = decrypter(info[2], GLOBAL_KEY)
+        cle = int(cle_user) + GLOBAL_KEY
         if id_saisi == decrypter(id_crypte, cle):
             mdp_decrypt_stocke = decrypter(info[0], cle)
             if mdp_saisi == mdp_decrypt_stocke:
-                print(f" ---------- MDP valide, bienvenue {info[1]}! ----------")
+                nom_decrypt = decrypter(info[1], cle)
+                print(f" ---------- MDP valide, bienvenue {nom_decrypt}! ----------")
                 return True
     return False
 
 
 if __name__ == "__main__":
-    dico = extraction("compte.txt")
+    dico = extraction("compte_crypte.txt")
     i = 0
     continuation_1 = True
     print("+++++++++++++ Bienvenue dans la BANQUE +++++++++++++")
@@ -108,8 +111,3 @@ if __name__ == "__main__":
                 print("Trop d'essaies...")
                 continuation_1 = False
     print("---------- Fermeture de la page de connexion.. ----------")
-    
-    """ a faire : rework du systeme de cryptage avec notament une cle de secu global pour decrypter globalement
-    le fichier ident.txt + changer systeme decryptage avec ord() et chr()
-    + vite fait opti boucle main
-    """
