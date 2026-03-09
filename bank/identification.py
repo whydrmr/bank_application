@@ -1,4 +1,4 @@
-GLOBAL_KEY = 21
+GLOBAL_KEY = 67
 
 def extraction(dcmt_text):
     """str -> dict
