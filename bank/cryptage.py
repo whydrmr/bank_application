@@ -1,4 +1,4 @@
-GLOBAL_KEY = 21
+GLOBAL_KEY = 67
 
 
 def crypter(texte, cle):
