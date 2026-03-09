@@ -10,15 +10,15 @@ def crypter(texte, cle):
 
     # chiffres
     if texte.isdigit():
-        for c in texte:
-            result += chr((ord(c) - ord('0') - cle) % 10 + ord('0'))
+        for caractere in texte:
+            result += chr((ord(caractere) - ord('0') - cle) % 10 + ord('0'))
         return result
 
     # texte
     else:
-        for c in texte.lower():
-            if 'a' <= c <= 'z':
-                result += chr((ord(c) - ord('a') - cle) % 26 + ord('a'))
+        for caractere in texte.lower():
+            if 'a' <= caractere <= 'z':
+                result += chr((ord(caractere) - ord('a') - cle) % 26 + ord('a'))
         return result
 
 
