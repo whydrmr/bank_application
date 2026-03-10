@@ -2,58 +2,79 @@ import os
 from datetime import date, datetime
 
 
-def charger_donnees(dossier_info_comptes):
+def charger_donnees(info_comptes):
     """
     ________________________________________
 
     Charge les donnes de tout les comptes.
 
-    str-->dict
+    str-->dictxdict
     ________________________________________
 
     """
+
     base_de_donnees = {}
+    base_de_budgets = {}
 
-    for fichier in os.listdir(dossier_info_comptes):
-        if fichier.endswith(".txt"):
-            user_id = fichier.replace(".txt", "")
-            base_de_donnees[user_id] = {}
+    for fichier in os.listdir(info_comptes):
+        if not fichier.endswith(".txt"):
+            continue
 
-            correspondance_comptes = {}
+        user_id = fichier.replace(".txt", "")
 
-            chemin = os.path.join(dossier_info_comptes, fichier)
+        base_de_donnees[user_id] = {}
+        base_de_budgets[user_id] = {}
+        correspondance_comptes = {}
 
-            with open(chemin, "r", encoding="utf-8") as f:
-                for ligne in f:
-                    ligne = ligne.strip()
-                    elements = ligne.split("*")
+        chemin = os.path.join(info_comptes, fichier)
+        with open(chemin, "r", encoding="utf-8") as f:
+            for ligne in f:
+                ligne = ligne.strip()
+                if not ligne:
+                    continue
 
-                    if elements[0] == "CPT":
-                        nom_compte = elements[1]
-                        cle_compte = nom_compte.lower().replace(" ", "_")
+                elements = ligne.split("*")
+                tag = elements[0].strip()
 
-                        correspondance_comptes[nom_compte] = cle_compte
-                        base_de_donnees[user_id][cle_compte] = []
+                if tag == "CPT":
+                    nom_compte = elements[1].strip()
+                    cle_compte = nom_compte.lower().replace(" ", "_")
 
-                    elif elements[0] == "OPE":
-                        date = elements[1]
-                        libelle = elements[2]
-                        compte = elements[3]
-                        montant = float(elements[4])
-                        type_op = elements[5]
-                        statut = elements[6] == "True"
-                        budget = elements[7]
+                    correspondance_comptes[nom_compte] = cle_compte
 
-                        cle_compte = correspondance_comptes[compte]
+                    base_de_donnees[user_id].setdefault(cle_compte, [])
+                    base_de_budgets[user_id].setdefault(cle_compte, [])
 
-                        base_de_donnees[user_id][cle_compte].append(
-                            [date, libelle, type_op, montant, statut, budget]
-                        )
+                elif tag == "OPE":
+                    date = elements[1].strip()
+                    libelle = elements[2].strip()
+                    compte = elements[3].strip()
+                    montant = float(elements[4])
+                    type_op = elements[5].strip()
+                    statut = elements[6].strip() == "True"
+                    budget = elements[7].strip()
 
-    return base_de_donnees
+                    cle_compte = compte.lower().replace(" ", "_")
+                    base_de_donnees[user_id].setdefault(cle_compte, [])
+                    base_de_donnees[user_id][cle_compte].append(
+                        [date, libelle, type_op, montant, statut, budget]
+                    )
+
+                elif tag == "BUD":
+                    libelle_budget = elements[1].strip()
+                    montant_max = float(elements[2])
+                    compte = elements[3].strip()
+
+                    cle_compte = compte.lower().replace(" ", "_")
+                    base_de_budgets[user_id].setdefault(cle_compte, [])
+                    base_de_budgets[user_id][cle_compte].append(
+                        [libelle_budget, montant_max]
+                    )
+
+    return base_de_donnees, base_de_budgets
 
 
-base_de_donnees = charger_donnees("donnees_comptes")
+base_de_donnees, base_de_budgets = charger_donnees("users")
 
 
 def sauvegarder_utilisateur(id_compte, base_de_donnees):
@@ -66,9 +87,15 @@ def sauvegarder_utilisateur(id_compte, base_de_donnees):
     _____________________________________________________________________
 
     """
-    fichier = f"donnees_comptes/{id_compte}.txt"
+    fichier = f"users/{id_compte}.txt"
 
     with open(fichier, "w", encoding="utf-8") as f:
+        for compte, budgets in base_de_budgets[id_compte].items():
+            nom_compte = compte.replace("_", " ").title()
+            for budget in budgets:
+                libelle_budget, montant_max = budget
+                f.write(f"BUD*{libelle_budget}*{montant_max}*{nom_compte}\n")
+
         for compte, operations in base_de_donnees[id_compte].items():
             nom_compte = compte.replace("_", " ").title()
             f.write(f"CPT*{nom_compte}\n")
@@ -80,17 +107,20 @@ def sauvegarder_utilisateur(id_compte, base_de_donnees):
                 )
 
 
-def choisirecompte(base_de_donnees, id_compte):
+def choisirecompte(base_de_donnees, id):
     """Demande sur quelle compte l'utilisateur veut ajouter la transaction"""
     while True:
-        print("Comptes disponibles :", ", ".join(base_de_donnees[id_compte].keys()))
-        compt = input("Compte(ex. Compte A ou Livret A) : ").lower().replace(" ", "_")
-        if compt not in base_de_donnees[id_compte]:
+        print(
+            "Comptes disponibles :",
+            ", ".join(k.capitalize() for k in base_de_donnees[id].keys()),
+        )
+        compt = input("Compte(ex. Compte A) : ").lower().replace(" ", "_")
+        if compt not in base_de_donnees[id]:
             reponse = input(
                 f"Le compte '{compt}' n'existe pas. Voulez-vous le créer ? (o/n) : "
             ).lower()
             if reponse == "o":
-                base_de_donnees[id_compte][compt] = []
+                base_de_donnees[id][compt] = []
                 print(f"Compte '{compt}' créé.")
                 break
             elif reponse == "n":
@@ -146,8 +176,6 @@ def operation(base_de_donnees, id_compte):
     qu'il veut ajouter a l'operation.Sous la forme:
     [date(str),libelle(str),montant(float),type(str),verification(str ou bool),budget(str)]
     """
-    assert id_compte in base_de_donnees, "ID inexistant."
-
     compt = choisirecompte(base_de_donnees, id_compte)
     while True:
         date = input("Date(sous la forme aaaa/mm/jj): ")
@@ -190,16 +218,6 @@ def virement(base_de_donnees, id, compte_1, compte_2, somme):
     ___________________________________________________________________________________
 
     """
-    assert id in base_de_donnees, "ID inexistant."
-
-    assert compte_1 in base_de_donnees[id] and compte_2 in base_de_donnees[id], (
-        "L'un des comptes n'existe pas."
-    )
-
-    assert compte_1 != compte_2, "Les comptes doivent être différentes."
-
-    assert somme > 0, "La somme doit être positive."
-
     choice = int(
         input("Choisissez le type de virement (1 = instantané / 2 = date future) : ")
     )

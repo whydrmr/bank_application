@@ -1,0 +1,15 @@
+BUD*sorties*300.0*Compte A
+BUD*divers*1000.0*Compte A
+BUD*alimentation*500.0*Compte B
+CPT*Compte A
+OPE*01/01/2022*cinema*Compte A*18.5*CB*False*sorties
+OPE*12/01/2022*anniversaire*Compte A*50.0*VIR*True*divers
+OPE*2026/12/03*salle de sport*Compte A*39.99*CB*True*sport
+OPE*2021/02/15*steam*Compte A*500.0*CB*True*divertisement
+OPE*01/12/2028*virement*Compte A*-500.0*VIR*False*
+OPE*2023/05/16*steam*Compte A*200.0*CB*True*divers
+OPE*10/03/2026*virement*Compte A*VIR*-1000.0*True* 
+CPT*Compte B
+OPE*06/01/2022*galette*Compte B*10.54*CB*True*alimentation
+OPE*01/12/2028*virement*Compte B*500.0*VIR*False*
+OPE*10/03/2026*virement*Compte B*VIR*1000.0*True* 
