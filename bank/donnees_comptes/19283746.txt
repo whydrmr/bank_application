@@ -1,0 +1,2 @@
+CPT*Compte A
+OPE*2026/03/07*cacao*Compte A*10.0*CB*True*alimentation
