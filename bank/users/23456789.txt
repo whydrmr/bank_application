@@ -11,7 +11,10 @@ OPE*2023/05/16*steam*Compte A*CB*200.0*True*divers
 OPE*10/03/2026*virement*Compte A*VIR*-1000.0*True*
 OPE*2026/03/11*Test*Compte A*CB*1000.0*False*200
 OPE*2001/09/11*test*Compte A*CB*2000000.0*True*divers
+OPE*11/03/2026*virement*Compte A*VIR*-2000.0*True* 
 CPT*Compte B
 OPE*06/01/2022*galette*Compte B*CB*10.54*True*alimentation
 OPE*01/12/2028*virement*Compte B*VIR*500.0*False*
 OPE*10/03/2026*virement*Compte B*VIR*1000.0*True*
+OPE*2023/02/20*test*Compte B*CB*500.0*True*divers
+OPE*11/03/2026*virement*Compte B*VIR*2000.0*True* 
