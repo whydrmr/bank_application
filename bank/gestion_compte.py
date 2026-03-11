@@ -34,7 +34,7 @@ def charger_donnees(info_comptes):
                     continue
 
                 elements = ligne.split("*")
-                tag = elements[0].strip()
+                tag = elements[0].split()
 
                 if tag == "CPT":
                     nom_compte = elements[1].strip()
@@ -49,7 +49,7 @@ def charger_donnees(info_comptes):
                     date = elements[1].strip()
                     libelle = elements[2].strip()
                     compte = elements[3].strip()
-                    montant = float(elements[4])
+                    montant = float(elements[4].strip())
                     type_op = elements[5].strip()
                     statut = elements[6].strip() == "True"
                     budget = elements[7].strip()
