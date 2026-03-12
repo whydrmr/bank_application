@@ -1,4 +1,4 @@
-from gestion_compte import base_de_donnees, base_de_budgets
+from gestion_compte import base_de_donnees, base_de_budgets, sauvegarder_utilisateur
 
 
 def filtre(donnes, iD):
@@ -73,7 +73,9 @@ def definir_budget(donnees, budgets, id):
             print("Veuillez entrer un nombre valide pour le montant.")
 
     budgets[id][compte].append([libelle_budget, montant_max])
-    print(f"Budget '{libelle_budget}' de {montant_max} ajouté au compte '{compte}'.")
+    print(
+        f"Budget '{libelle_budget}' de {montant_max} ajouté au {compte.capitalize()}."
+    )
 
 
 if __name__ == "__main__":
@@ -82,3 +84,4 @@ if __name__ == "__main__":
     afficher_budget(base_de_budgets, id_compte)
     print("---Pour definir un budget---")
     definir_budget(base_de_donnees, base_de_budgets, id_compte)
+    sauvegarder_utilisateur(id_compte, base_de_donnees)
