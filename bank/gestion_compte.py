@@ -239,7 +239,7 @@ def virement(base_de_donnees, id, compte_1, compte_2, somme):
         return False
 
     verification = dat <= date.today()
-    date_str = dat.strftime("%d/%m/%Y")
+    date_str = dat.strftime("%Y/%m/%d")
 
     liste_1 = [date_str, "virement", "VIR", -somme, verification, " "]
     liste_2 = [date_str, "virement", "VIR", somme, verification, " "]
