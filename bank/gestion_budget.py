@@ -84,4 +84,3 @@ if __name__ == "__main__":
     afficher_budget(base_de_budgets, id_compte)
     print("---Pour definir un budget---")
     definir_budget(base_de_donnees, base_de_budgets, id_compte)
-    sauvegarder_utilisateur(id_compte, base_de_donnees)
