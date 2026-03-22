@@ -1,5 +1,6 @@
 BUD*sorties*300.0*Compte A
 BUD*divers*1000.0*Compte A
+BUD*ks*500.0*Compte A
 BUD*alimentation*500.0*Compte B
 CPT*Compte A
 OPE*2022/01/01*cinema*Compte A*CB*18.5*False*sorties
@@ -13,7 +14,7 @@ OPE*2026/03/11*Test*Compte A*CB*1000.0*False*200
 OPE*2001/09/11*test*Compte A*CB*2000000.0*True*divers
 OPE*2026/03/11*virement*Compte A*VIR*-2000.0*True*
 OPE*2026/03/12*virement*Compte A*VIR*-10000.0*True*
-OPE*2026/03/12*virement*Compte A*VIR*-5000.0*True* 
+OPE*2026/03/12*virement*Compte A*VIR*-5000.0*True*
 CPT*Compte B
 OPE*2022/01/06*galette*Compte B*CB*10.54*True*alimentation
 OPE*2028/12/01*virement*Compte B*VIR*500.0*False*
@@ -21,4 +22,4 @@ OPE*2026/03/10*virement*Compte B*VIR*1000.0*True*
 OPE*2023/02/20*test*Compte B*CB*500.0*True*divers
 OPE*2026/03/11*virement*Compte B*VIR*2000.0*True*
 OPE*2026/03/12*virement*Compte B*VIR*10000.0*True*
-OPE*2026/03/12*virement*Compte B*VIR*5000.0*True* 
+OPE*2026/03/12*virement*Compte B*VIR*5000.0*True*

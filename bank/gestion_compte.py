@@ -77,7 +77,7 @@ def charger_donnees(info_comptes):
 base_de_donnees, base_de_budgets = charger_donnees("users")
 
 
-def sauvegarder_utilisateur(id_compte, base_de_donnees):
+def sauvegarder_utilisateur(id_compte, base_de_donnees, base_de_budgets):
     """
     _____________________________________________________________________
 
