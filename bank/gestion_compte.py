@@ -247,10 +247,9 @@ def virement(base_de_donnees, id, compte_1, compte_2, somme):
     return compte_1, liste_1, compte_2, liste_2
 
 
-if __name__ == "__main__":
-    id_compte = input("Quel utilisateur ? (ex: 23456789) : ")
+def main_gestion_compte(id_compte):
     op_vir(base_de_donnees, id_compte)
-    sauvegarder_utilisateur(id_compte, base_de_donnees)
+    sauvegarder_utilisateur(id_compte, base_de_donnees, base_de_budgets)
 
     # Afficher ce qu'on a dans le compte après ajout
     print("\n--- Données mises à jour ---")

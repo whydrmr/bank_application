@@ -78,8 +78,7 @@ def verification_mdp_utilisateur(id_saisi, mdp_saisi, base_donnee):
                 return True
     return False
 
-
-if __name__ == "__main__":
+def main_identification():
     base_donnee = extraction("compte_crypte.txt")
     nb_essaie = 0
     continuation_1 = True
@@ -113,4 +112,7 @@ if __name__ == "__main__":
             if nb_essaie > 3:
                 print("Trop d'essaies...")
                 continuation_1 = False
-    print("---------- Fermeture de la page de connexion.. ----------")
+                print("---------- Fermeture de la page de connexion.. ----------")
+    return identifiant
+
+

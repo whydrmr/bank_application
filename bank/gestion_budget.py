@@ -78,8 +78,7 @@ def definir_budget(donnees, budgets, id):
     )
 
 
-if __name__ == "__main__":
-    id_compte = input("Quel utilisateur ? (ex: 23456789) : ")
+def main_gestion_budget(id_compte):
     print(f"\n ---Donnees a propos du compte : {id_compte}---")
     afficher_budget(base_de_budgets, id_compte)
     print("---Pour definir un budget---")
