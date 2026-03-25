@@ -78,9 +78,9 @@ def definir_budget(donnees, budgets, id):
     )
 
 
-def main_gestion_budget(id_compte):
+def main_gestion_budget(id_compte, cle):
     print(f"\n ---Donnees a propos du compte : {id_compte}---")
     afficher_budget(base_de_budgets, id_compte)
     print("---Pour definir un budget---")
     definir_budget(base_de_donnees, base_de_budgets, id_compte)
-    sauvegarder_utilisateur(id_compte, base_de_donnees, base_de_budgets)
+    sauvegarder_utilisateur(id_compte, base_de_donnees, base_de_budgets, cle)

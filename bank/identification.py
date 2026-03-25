@@ -36,7 +36,7 @@ def decrypter(a_decrypter, cle):
     decrypter l'id et le mdp de l'identifiant avec la clé (clé cesar)
     """
     result = ""
-    cle = int(cle)  # Si c un nombre (id)
+    cle = GLOBAL_KEY  # Si c un nombre (id)
     if a_decrypter.isdigit():  # on va traiter que des str ducoup c'est une methode pour verifier que c bien des chiffres
         for elem in a_decrypter:
             result += chr((ord(elem) - ord("0") + cle) % 10 + ord("0"))
@@ -54,9 +54,8 @@ def verification_id_utilisateur(id_decrypt, base_donnee):
     """str x dict -> Bool
     rentrée l'identifiant décrypter de l'utilsiateur avec verif de la tipo (ppas de lettre, limitre de lettre etc)
     """
-    for id_crypte, info in base_donnee.items():
-        cle_user = decrypter(info[2], GLOBAL_KEY)
-        cle = int(cle_user) + GLOBAL_KEY
+    for id_crypte in base_donnee.keys():
+        cle = GLOBAL_KEY
         if id_decrypt == decrypter(id_crypte, cle):
             return True
     return False
@@ -69,22 +68,21 @@ def verification_mdp_utilisateur(id_saisi, mdp_saisi, base_donnee):
     """
     for id_crypte, info in base_donnee.items():
         cle_user = decrypter(info[2], GLOBAL_KEY)
-        cle = int(cle_user) + GLOBAL_KEY
+        cle = GLOBAL_KEY
         if id_saisi == decrypter(id_crypte, cle):
             mdp_decrypt_stocke = decrypter(info[0], cle)
             if mdp_saisi == mdp_decrypt_stocke:
                 nom_decrypt = decrypter(info[1], cle)
                 print(f" ---------- MDP valide, bienvenue {nom_decrypt}! ----------")
-                return True
-    return False
+                return True, cle_user
+    return False, None
+
 
 def main_identification():
     base_donnee = extraction("compte_crypte.txt")
     nb_essaie = 0
-    continuation_1 = True
     print("+++++++++++++ Bienvenue dans la BANQUE +++++++++++++")
-    while continuation_1:
-        continuation_2 = True
+    while True:
         identifiant = input("Veuillez entrer votre ID : ")
         if not validation_typo(identifiant, 8):
             continue
@@ -93,26 +91,29 @@ def main_identification():
         ):  # si l'utilisateur est trv, on verif son mdp MAIS ON A PAS RECUP LES INFOS DIRECT.. il faut retourner les chercher
             print("---------- ID valide ----------")
             nb_essaie = 0
-            while continuation_2:
+            while True:
                 mdp = input("Veuillez entrer votre MDP : ")
                 if not validation_typo(mdp, 6):
                     continue
-                if verification_mdp_utilisateur(identifiant, mdp, base_donnee):
-                    continuation_1 = False
-                    continuation_2 = False
+
+                valide, cle = verification_mdp_utilisateur(
+                    identifiant, mdp, base_donnee
+                )
+
+                if valide:
+                    return identifiant, cle
+
                 else:
                     print("MDP incorrect")
                     nb_essaie += 1
                     if nb_essaie > 3:
                         print("Trop d'essaies pour le mdp")
-                        continuation_2 = False
+                        break
         else:
             print("ID incorrect")
             nb_essaie += 1
             if nb_essaie > 3:
                 print("Trop d'essaies...")
-                continuation_1 = False
-                print("---------- Fermeture de la page de connexion.. ----------")
-    return identifiant
+                break
 
-
+    print("---------- Fermeture de la page de connexion.. ----------")

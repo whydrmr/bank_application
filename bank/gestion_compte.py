@@ -1,59 +1,51 @@
 import os
 from datetime import date, datetime
+from crypt import encrypt, decrypt
 
 
-def charger_donnees(info_comptes):
+def charger_donnees(dossier_utilisateurs, cle):
     """
-    ________________________________________
-
-    Charge les donnes de tout les comptes.
-
-    str-->dictxdict
-    ________________________________________
-
+    Charge toutes les données depuis des fichiers cryptés.
     """
-
+    cle = int(cle)
     base_de_donnees = {}
     base_de_budgets = {}
 
-    for fichier in os.listdir(info_comptes):
+    for fichier in os.listdir(dossier_utilisateurs):
         if not fichier.endswith(".txt"):
             continue
 
         user_id = fichier.replace(".txt", "")
-
         base_de_donnees[user_id] = {}
         base_de_budgets[user_id] = {}
-        correspondance_comptes = {}
 
-        chemin = os.path.join(info_comptes, fichier)
+        chemin = os.path.join(dossier_utilisateurs, fichier)
         with open(chemin, "r", encoding="utf-8") as f:
             for ligne in f:
                 ligne = ligne.strip()
                 if not ligne:
                     continue
 
-                elements = ligne.split("*")
+                ligne_decrypte = decrypt(ligne, cle)
+                elements = ligne_decrypte.split("*")
                 tag = elements[0].strip()
 
                 if tag == "CPT":
                     nom_compte = elements[1].strip()
                     cle_compte = nom_compte.lower().replace(" ", "_")
-
-                    correspondance_comptes[nom_compte] = cle_compte
-
                     base_de_donnees[user_id].setdefault(cle_compte, [])
                     base_de_budgets[user_id].setdefault(cle_compte, [])
 
                 elif tag == "OPE":
-                    date = elements[1].strip()
-                    libelle = elements[2].strip()
-                    compte = elements[3].strip()
-                    type_op = elements[4].strip()
-                    montant = float(elements[5])
-                    statut = elements[6].strip() == "True"
-                    budget = elements[7].strip()
-
+                    date, libelle, compte, type_op, montant, statut, budget = (
+                        elements[1].strip(),
+                        elements[2].strip(),
+                        elements[3].strip(),
+                        elements[4].strip(),
+                        float(elements[5]),
+                        elements[6].strip() == "True",
+                        elements[7].strip(),
+                    )
                     cle_compte = compte.lower().replace(" ", "_")
                     base_de_donnees[user_id].setdefault(cle_compte, [])
                     base_de_donnees[user_id][cle_compte].append(
@@ -64,7 +56,6 @@ def charger_donnees(info_comptes):
                     libelle_budget = elements[1].strip()
                     montant_max = float(elements[2])
                     compte = elements[3].strip()
-
                     cle_compte = compte.lower().replace(" ", "_")
                     base_de_budgets[user_id].setdefault(cle_compte, [])
                     base_de_budgets[user_id][cle_compte].append(
@@ -74,10 +65,7 @@ def charger_donnees(info_comptes):
     return base_de_donnees, base_de_budgets
 
 
-base_de_donnees, base_de_budgets = charger_donnees("users")
-
-
-def sauvegarder_utilisateur(id_compte, base_de_donnees, base_de_budgets):
+def sauvegarder_utilisateur(id_compte, base_de_donnees, base_de_budgets, cle):
     """
     _____________________________________________________________________
 
@@ -88,23 +76,22 @@ def sauvegarder_utilisateur(id_compte, base_de_donnees, base_de_budgets):
 
     """
     fichier = f"users/{id_compte}.txt"
-
     with open(fichier, "w", encoding="utf-8") as f:
         for compte, budgets in base_de_budgets[id_compte].items():
             nom_compte = compte.replace("_", " ").title()
             for budget in budgets:
                 libelle_budget, montant_max = budget
-                f.write(f"BUD*{libelle_budget}*{montant_max}*{nom_compte}\n")
+                ligne = f"BUD*{libelle_budget}*{montant_max}*{nom_compte}"
+                f.write(encrypt(ligne, cle) + "\n")
 
         for compte, operations in base_de_donnees[id_compte].items():
             nom_compte = compte.replace("_", " ").title()
-            f.write(f"CPT*{nom_compte}\n")
-
+            ligne_cpt = f"CPT*{nom_compte}"
+            f.write(encrypt(ligne_cpt, cle) + "\n")
             for op in operations:
-                date, libelle, type_op, montant, statut, budget = op
-                f.write(
-                    f"OPE*{date}*{libelle}*{nom_compte}*{type_op}*{montant}*{statut}*{budget}\n"
-                )
+                date_op, libelle, type_op, montant, statut, budget = op
+                ligne_ope = f"OPE*{date_op}*{libelle}*{nom_compte}*{type_op}*{montant}*{statut}*{budget}"
+                f.write(encrypt(ligne_ope, cle) + "\n")
 
 
 def choisirecompte(base_de_donnees, id):
@@ -247,9 +234,10 @@ def virement(base_de_donnees, id, compte_1, compte_2, somme):
     return compte_1, liste_1, compte_2, liste_2
 
 
-def main_gestion_compte(id_compte):
+def main_gestion_compte(id_compte, cle):
+    base_de_donnees, base_de_budgets = charger_donnees("users", cle)
     op_vir(base_de_donnees, id_compte)
-    sauvegarder_utilisateur(id_compte, base_de_donnees, base_de_budgets)
+    sauvegarder_utilisateur(id_compte, base_de_donnees, base_de_budgets, cle)
 
     # Afficher ce qu'on a dans le compte après ajout
     print("\n--- Données mises à jour ---")

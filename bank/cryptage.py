@@ -11,14 +11,14 @@ def crypter(texte, cle):
     # chiffres
     if texte.isdigit():
         for caractere in texte:
-            result += chr((ord(caractere) - ord('0') - cle) % 10 + ord('0'))
+            result += chr((ord(caractere) - ord("0") - cle) % 10 + ord("0"))
         return result
 
     # texte
     else:
         for caractere in texte.lower():
-            if 'a' <= caractere <= 'z':
-                result += chr((ord(caractere) - ord('a') - cle) % 26 + ord('a'))
+            if "a" <= caractere <= "z":
+                result += chr((ord(caractere) - ord("a") - cle) % 26 + ord("a"))
         return result
 
 
@@ -28,7 +28,6 @@ def crypter_fichier(fichier_entree, fichier_sortie):
 
     with open(fichier_sortie, "w") as f:
         for ligne in lignes:
-
             ligne = ligne.strip()
             identifiant, mdp, nom, cle = ligne.split("*")
 
