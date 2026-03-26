@@ -1,6 +1,7 @@
 SLU*jfikzvj*299.9*Tfdgkv R
 SLU*uzmvij*0999.9*Tfdgkv R
 SLU*bj*499.9*Tfdgkv R
+SLU*flzzzfazfe*012345678.9*Tfdgkv R
 SLU*rczdvkrkzfe*499.9*Tfdgkv S
 SLU*1999*1999.9*Tfdgkv S
 TGK*Tfdgkv R
@@ -19,7 +20,7 @@ FGV*1915/92/01*mzivdvek*Tfdgkv R*MZI*-4999.9*Wrcjv*
 FGV*1915/92/12*mzivdvek*Tfdgkv R*MZI*-199.9*Wrcjv*
 FGV*1915/92/12*mzivdvek*Tfdgkv R*MZI*199.9*Wrcjv*
 FGV*1998/09/01*K vjk*Tfdgkv R*TS*9.00*Wrcjv*9
-FGV*1915/92/14*mzivdvek*Tfdgkv R*MZI*-499.9*Kilv* 
+FGV*1915/92/14*mzivdvek*Tfdgkv R*MZI*-499.9*Kilv*
 TGK*Tfdgkv S
 FGV*1911/90/95*xrcvkkv*Tfdgkv S*TS*09.43*Wrcjv*rczdvkrkzfe
 FGV*1917/01/90*mzivdvek*Tfdgkv S*MZI*499.9*Wrcjv*
@@ -29,4 +30,4 @@ FGV*1915/92/00*mzivdvek*Tfdgkv S*MZI*1999.9*Wrcjv*
 FGV*1915/92/01*mzivdvek*Tfdgkv S*MZI*09999.9*Wrcjv*
 FGV*1915/92/01*mzivdvek*Tfdgkv S*MZI*4999.9*Wrcjv*
 FGV*1990/98/00*aldvrlo*Tfdgkv S*TS*299.9*Wrcjv*uzmvij
-FGV*1915/92/14*mzivdvek*Tfdgkv S*MZI*499.9*Kilv* 
+FGV*1915/92/14*mzivdvek*Tfdgkv S*MZI*499.9*Kilv*

@@ -1,4 +1,4 @@
-from gestion_compte import base_de_donnees, base_de_budgets, sauvegarder_utilisateur
+from gestion_compte import charger_donnees, sauvegarder_utilisateur
 
 
 def filtre(donnes, iD):
@@ -28,7 +28,7 @@ def filtre(donnes, iD):
     return resultat
 
 
-def afficher_budget(budgets, id):
+def afficher_budget(base_de_budgets, id):
     """
     Affiche le budget.
 
@@ -79,8 +79,24 @@ def definir_budget(donnees, budgets, id):
 
 
 def main_gestion_budget(id_compte, cle):
-    print(f"\n ---Donnees a propos du compte : {id_compte}---")
-    afficher_budget(base_de_budgets, id_compte)
-    print("---Pour definir un budget---")
-    definir_budget(base_de_donnees, base_de_budgets, id_compte)
+    base_de_donnees, base_de_budgets = charger_donnees("users", cle)
+    while True:
+        print(
+            "______________________________________________________________________________"
+        )
+        print()
+        choix = input(
+            "| 1 : Afficher le budget \n| 2 : Definir un nouveau budget \n|'q' : quitter \n"
+        )
+        if choix == "1":
+            afficher_budget(base_de_budgets, id_compte)
+            continue
+        elif choix == "2":
+            definir_budget(base_de_donnees, base_de_budgets, id_compte)
+            continue
+        elif choix == "q":
+            break
+        else:
+            print("Input invalide...")
+            continue
     sauvegarder_utilisateur(id_compte, base_de_donnees, base_de_budgets, cle)

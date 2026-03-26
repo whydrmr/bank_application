@@ -6,7 +6,7 @@ def main():
     id, cle = main_identification()
     while True:
         response = input(
-            "| 1 : Gestion compte \n| 2 : Gestion_budget \n| 3 : Changer identifiant \n| 'q' : quitter \n"
+            "| 1 : Gestion compte \n| 2 : Gestion_budget \n| 3 : Changer identifiant \n|'q' : quitter \n"
         )
         if response == "1":
             main_gestion_compte(id, cle)
