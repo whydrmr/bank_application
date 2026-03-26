@@ -122,12 +122,12 @@ def choisirecompte(base_de_donnees, id):
     return compt
 
 
-def op_vir(base_de_donnees, id_compte):
+def op_vir(base_de_donnees, base_de_budgets, id_compte):
     """Demande soit operation soit virement"""
     x = int(input("Choisir entre : 1 - operation ; 2 - virement : "))
 
     if x == 1:  # renvoie la fonction operation
-        compt, liste = operation(base_de_donnees, id_compte)
+        compt, liste = operation(base_de_donnees, base_de_budgets, id_compte)
         ajoute_transaction(base_de_donnees, id_compte, compt, liste)
         return base_de_donnees
 
@@ -158,7 +158,7 @@ def ajoute_transaction(base_de_donnees, id_compte, compt, liste):
     return base_de_donnees
 
 
-def operation(base_de_donnees, id_compte):
+def operation(base_de_donnees, base_de_budgets, id_compte):
     """Demande a l'utilisateur quelles sont les details
     qu'il veut ajouter a l'operation.Sous la forme:
     [date(str),libelle(str),montant(float),type(str),verification(str ou bool),budget(str)]
@@ -189,9 +189,29 @@ def operation(base_de_donnees, id_compte):
             print(
                 "Verification doit etre : soit - 1 (Verifie), soit - 2 (Pas encore verifie) "
             )
+    while True:
+        budgets_disponibles = [b[0].lower() for b in base_de_budgets[id_compte][compt]]
 
-    budget = str(input("Budget: "))
+        print(
+            "Budgets disponibles :",
+            ", ".join(b for b in budgets_disponibles),
+        )
+
+        budget = input("Budget: ").lower()
+
+        if budget in budgets_disponibles:
+            break
+        else:
+            print("Ce budget n'existe pas.")
+
     liste = [date, libelle, typ, montant, verification, budget]
+    budgets = base_de_budgets[id_compte][compt]
+
+    for b in budgets:
+        if b[0] == budget:
+            b[1] -= montant
+            break
+
     return compt, liste
 
 
@@ -228,15 +248,15 @@ def virement(base_de_donnees, id, compte_1, compte_2, somme):
     verification = dat <= date.today()
     date_str = dat.strftime("%Y/%m/%d")
 
-    liste_1 = [date_str, "virement", "VIR", -somme, verification, " "]
-    liste_2 = [date_str, "virement", "VIR", somme, verification, " "]
+    liste_1 = [date_str, "Virement", "VIR", -somme, verification, " "]
+    liste_2 = [date_str, "Virement", "VIR", somme, verification, " "]
 
     return compte_1, liste_1, compte_2, liste_2
 
 
 def main_gestion_compte(id_compte, cle):
     base_de_donnees, base_de_budgets = charger_donnees("users", cle)
-    op_vir(base_de_donnees, id_compte)
+    op_vir(base_de_donnees, base_de_budgets, id_compte)
     sauvegarder_utilisateur(id_compte, base_de_donnees, base_de_budgets, cle)
 
     # Afficher ce qu'on a dans le compte après ajout

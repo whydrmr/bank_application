@@ -5,9 +5,11 @@ from gestion_compte import main_gestion_compte
 def main():
     id, cle = main_identification()
     while True:
-        response = input(
+        print(
             "| 1 : Gestion compte \n| 2 : Gestion_budget \n| 3 : Changer identifiant \n|'q' : quitter \n"
         )
+        response = input()
+        print()
         if response == "1":
             main_gestion_compte(id, cle)
         elif response == "2":

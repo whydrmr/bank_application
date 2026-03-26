@@ -86,15 +86,16 @@ def main_gestion_budget(id_compte, cle):
         )
         print()
         choix = input(
-            "| 1 : Afficher le budget \n| 2 : Definir un nouveau budget \n|'q' : quitter \n"
+            "| 1 : Afficher le budget \n| 2 : Definir un nouveau budget \n|'r' : revenir en arriere \n"
         )
+        print()
         if choix == "1":
             afficher_budget(base_de_budgets, id_compte)
             continue
         elif choix == "2":
             definir_budget(base_de_donnees, base_de_budgets, id_compte)
             continue
-        elif choix == "q":
+        elif choix == "r":
             break
         else:
             print("Input invalide...")
