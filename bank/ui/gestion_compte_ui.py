@@ -63,12 +63,9 @@ def virement(fenetre_principale) :
     liste_compte_dest.insert(2, "D")
     liste_compte_dest.pack(side = LEFT)
 
-
-
+    
 
 
 
 
     Button(fenetre_virement, text = "Fermer", command = fenetre_virement.destroy).pack(expand= True)
-
-    
