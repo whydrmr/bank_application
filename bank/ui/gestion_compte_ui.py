@@ -1,53 +1,50 @@
 from tkinter import *
+from tkinter.ttk import Combobox
 
 def virement(fenetre_principale):
     fenetre_virement = Toplevel(fenetre_principale)
     fenetre_virement.title("Virement")
-    fenetre_virement.geometry("500x500")
+    fenetre_virement.geometry("1000x1000")
 
-    Label(fenetre_virement, text="Virement", font=("", 18)).pack(pady=20)
+    Label(fenetre_virement, text="Virement", font=("", 18)).pack(pady=(100, 70))
 
     frm_virement = Frame(fenetre_virement)
-    frm_virement.pack(fill=X, padx=30, pady=20)
+    frm_virement.pack(expand = True, padx = (0,10))
 
     # Compte départ
     frm_depart = Frame(frm_virement)
-    frm_depart.pack(anchor=W)
+    frm_depart.pack(expand = True, anchor = CENTER,  padx = (40,0))
+
 
     lbl_compte_dep = Label(frm_depart, text="Compte de départ :", font=("", 16))
-    lbl_compte_dep.pack(side=LEFT, padx=(40, 0), pady=5)
+    lbl_compte_dep.pack(side=LEFT, padx=(16,0), expand = True)
 
-    liste_compte_depart = Listbox(frm_depart, height=4, font=("", 14), exportselection=False)
-    liste_compte_depart.insert(1, "A")
-    liste_compte_depart.insert(2, "B")
-    liste_compte_depart.insert(3, "C")
-    liste_compte_depart.insert(4, "D")
-    liste_compte_depart.pack(side=LEFT)
+
+    liste_compte_depart = ["A", "B", "C", "D"]
+    liste_deroulante_dep = Combobox(frm_depart, values = liste_compte_depart)
+    liste_deroulante_dep.pack(expand = True)
 
     # Compte destinataire
     frm_dest = Frame(frm_virement)
-    frm_dest.pack(anchor=W)
+    frm_dest.pack(expand = True, anchor = CENTER, padx = (24,0))
 
     lbl_compte_dest = Label(frm_dest, text="Compte destinataire :", font=("", 16))
-    lbl_compte_dest.pack(side=LEFT, padx=(20, 0), pady=(10, 50))
+    lbl_compte_dest.pack(side=LEFT, padx=(20, 0), pady=(45, 50), expand = True)
 
-    liste_compte_dest = Listbox(frm_dest, height=4, font=("", 14), exportselection=False)
-    liste_compte_dest.insert(1, "A")
-    liste_compte_dest.insert(2, "B")
-    liste_compte_dest.insert(3, "C")
-    liste_compte_dest.insert(4, "D")
-    liste_compte_dest.pack(side=LEFT)
+    liste_compte_dest =["A", "B", "C", "D"]
+    liste_deroulante_dest = Combobox(frm_dest, values = liste_compte_dest)
+    liste_deroulante_dest.pack(expand = True)
 
     Button(
         fenetre_virement,
         text="Fermer",
         command=fenetre_virement.destroy
-    ).pack(expand=True)
+    ).pack(expand = True, pady = (0,2))
 
 def addop(fenetre_principale):
     fenop = Toplevel(fenetre_principale)
     fenop.title("Ajouter une opération")
-    fenop.geometry("500x500")
+    fenop.geometry("1000x1000")
 
     Label(fenop, text="Ajouter une opération", font=("", 18)).pack(pady=20)
 
@@ -93,7 +90,7 @@ def addop(fenetre_principale):
 def addcompte(fenetre_principale):
     fencompte = Toplevel(fenetre_principale)
     fencompte.title("Ajouter un compte")
-    fencompte.geometry("500x300")
+    fencompte.geometry("1000x1000")
 
     Label(fencompte, text="Ajouter un compte", font=("", 18)).pack(pady=20)
 
@@ -127,7 +124,7 @@ def addcompte(fenetre_principale):
 def ouvrir_gestion_compte(fenetre_principale):
     fenetre_gestion_compte = Toplevel(fenetre_principale)
     fenetre_gestion_compte.title("Gestion de compte")
-    fenetre_gestion_compte.geometry("500x500")
+    fenetre_gestion_compte.geometry("1000x1000")
 
     Label(fenetre_gestion_compte, text="Gestion de Compte", font=("", 18)).pack(expand=True)
 
@@ -137,15 +134,15 @@ def ouvrir_gestion_compte(fenetre_principale):
     lbl_montant.pack(anchor=CENTER)
 
     def action_virement():
-        #add logic
+        # add logic
         virement(fenetre_gestion_compte)
 
     def action_ajouter_operation():
-        #add logic
+        # add logic
         addop(fenetre_gestion_compte)
 
     def action_ajouter_compte():
-        #add logic
+        # add logic
         addcompte(fenetre_gestion_compte)
 
     Button(
@@ -170,4 +167,5 @@ def ouvrir_gestion_compte(fenetre_principale):
         fenetre_gestion_compte,
         text="Fermer",
         command=fenetre_gestion_compte.destroy
-    ).pack(expand=True)
+    ).pack(expand=True, pady = 50)
+

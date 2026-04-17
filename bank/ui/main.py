@@ -14,7 +14,7 @@ def se_connecter():
 
 identification_fenetre = Tk()
 identification_fenetre.title("Espace Bancaire - Connexion")
-identification_fenetre.geometry("500x500")
+identification_fenetre.geometry("1000x1000")
 
 frm_id_mdp = Frame(identification_fenetre)
 frm_id_mdp.pack(expand = True, padx = (0,10))

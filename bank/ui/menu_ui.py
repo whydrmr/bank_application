@@ -5,7 +5,7 @@ import gestion_budget_ui
 def ouvrir_menu(fenetre_parente):
     fenetre_menu = gestion_budget_ui.Toplevel(fenetre_parente)
     fenetre_menu.title("Menu Principal")
-    fenetre_menu.geometry("500x500")
+    fenetre_menu.geometry("1000x1000")
 
     gestion_budget_ui.Label(fenetre_menu, text="Que souhaitez-vous faire ?", font=("", 20)).pack(expand=True)
 
