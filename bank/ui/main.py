@@ -36,29 +36,7 @@ Entry(frm_mdp, show="*").pack(side=LEFT, padx = 1)
 # connection
 Button(frm_id_mdp, text="Se connecter", command = se_connecter).pack(expand=True, padx = (50,0), pady = 50)
 
+
+
 identification_fenetre.mainloop()
 
-
-
-
-
-# permet de tester
-fenetre = Tk()
-fenetre.title("Menu Principal")
-fenetre.geometry("500x500")
-
-Label(fenetre, text="Que souhaitez-vous faire ?", font=("", 18)).pack(expand=True)
-
-Button(
-    fenetre,
-    text="Aller à la Gestion de compte",
-    command=lambda: ouvrir_gestion_compte(fenetre)
-).pack(expand=True)
-
-Button(
-    fenetre,
-    text="Fermer",
-    command=fenetre.destroy
-).pack(expand=True)
-
-fenetre.mainloop()
