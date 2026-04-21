@@ -1,7 +1,5 @@
 import tkinter as tk
-
-# On importe seulement la fonction du menu gestion_compte
-from menu_ui import ouvrir_menu
+from .menu_ui import ouvrir_menu
 
 
 def se_connecter():
@@ -25,19 +23,17 @@ tk.Label(
     frm_id_mdp, text="     Bienvenue sur la fenêtre principale !", font=("", 25)
 ).pack(expand=True, pady=20)
 
-# id
+
 frm_id = tk.Frame(frm_id_mdp)
 frm_id.pack(anchor=tk.CENTER, padx=(40, 0), pady=5)
 tk.Label(frm_id, text="ID :").pack(side=tk.LEFT, padx=5)
 tk.Entry(frm_id).pack(side=tk.LEFT, padx=3)
 
-# mdp
 frm_mdp = tk.Frame(frm_id_mdp)
 frm_mdp.pack(anchor=tk.CENTER, padx=(24, 0), pady=(10, 50))
 tk.Label(frm_mdp, text="MDP :").pack(side=tk.LEFT, padx=5)
 tk.Entry(frm_mdp, show="*").pack(side=tk.LEFT, padx=1)
 
-# connection
 tk.Button(frm_id_mdp, text="Se connecter", command=se_connecter).pack(
     expand=True, padx=(50, 0), pady=50
 )

@@ -1,6 +1,6 @@
 import tkinter as tk
-import gestion_compte_ui
-import gestion_budget_ui
+from . import gestion_compte_ui
+from . import gestion_budget_ui
 
 
 def ouvrir_menu(fenetre_parente):
