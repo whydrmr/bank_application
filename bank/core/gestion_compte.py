@@ -1,6 +1,6 @@
 import os
 from datetime import date
-from crypt import encrypt, decrypt
+from .crypt import encrypt, decrypt
 
 
 def charger_donnees(dossier_utilisateurs, cle):

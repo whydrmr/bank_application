@@ -45,12 +45,12 @@ def virement():
 
     # Compte départ
     frm_depart = tk.Frame(frm_virement)
-    frm_depart.pack(expand=True, anchor=tk.CENTER, padx=(40, 0))
+    frm_depart.pack(expand=True, anchor=tk.CENTER, padx=(40, 0), pady=(0, 20))
 
     lbl_compte_dep = tk.Label(frm_depart, text="Compte de départ :", font=("", 16))
     lbl_compte_dep.pack(side=tk.LEFT, padx=(16, 0), expand=True)
 
-    dep = Combobox(frm_depart, values=list(base_de_donnees[id_compte].keys()))
+    dep = Combobox(frm_depart, values=["a", "b"])
     dep.pack(expand=True)
 
     # Compte destinataire
@@ -60,21 +60,21 @@ def virement():
     lbl_compte_dest = tk.Label(frm_dest, text="Compte destinataire :", font=("", 16))
     lbl_compte_dest.pack(side=tk.LEFT, padx=(20, 0), pady=(45, 50), expand=True)
 
-    dest = Combobox(frm_dest, values=list(base_de_donnees[id_compte].keys()))
+    dest = Combobox(frm_dest, values=["a", "b"])
     dest.pack(expand=True)
 
     frm_montant = tk.Frame(frm_virement)
-    frm_montant.pack(expand=True, anchor=tk.CENTER)
+    frm_montant.pack(anchor=tk.CENTER, expand=True)
     tk.Label(frm_montant, text="Montant :", font=("", 16), width=10, anchor=tk.W).pack(
-        side=tk.LEFT
+        side=tk.LEFT, padx=(50, 0)
     )
-    montant = tk.Entry(frm_montant, font=("", 14), width=20).pack(side=tk.LEFT)
+    montant = tk.Entry(frm_montant, font=("", 14), width=10).pack(side=tk.LEFT)
 
     tk.Button(
-        fenetre_virement,
+        frm_virement,
         text="Valider",
         command=lambda: action_virement(dep, dest, montant, date.today()),
-    ).pack(expand=True, pady=2)
+    ).pack(expand=True, pady=(75, 0))
 
     tk.Button(fenetre_virement, text="Fermer", command=fenetre_virement.destroy).pack(
         expand=True, pady=(0, 2)
