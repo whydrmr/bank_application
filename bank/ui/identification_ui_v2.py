@@ -10,27 +10,33 @@ BASE_DONNEE = IDTXT.extraction(os.path.join(os.path.dirname(__file__), '..', 'co
 NB_ESSAIS = 0
 
 def identification_mainloop():
+    #variable local mais pas local
+    identifiant_valide = None
+    cle_user_valide = None
+    
     def se_connecter():
-        
         global NB_ESSAIS
+        nonlocal identifiant_valide, cle_user_valide
         identifiant = entry_id.get()
         mdp = entry_mdp_var.get()
 
         if not IDTXT.validation_typo(identifiant, 8):
             messagebox.showwarning("Erreur ID", "L'ID doit contenir 8 chiffres.")
-            return
+            return 
         
         if not IDTXT.validation_typo(mdp, 6):
             messagebox.showwarning("Erreur MDP", "Le MDP doit contenir 6 chiffres.")
-            return
-
+            return 
+        
         if IDTXT.verification_id_utilisateur(identifiant, BASE_DONNEE):
             valide, cle_user, nom_decrypt = IDTXT.verification_mdp_utilisateur(identifiant, mdp, BASE_DONNEE)
             
             if valide:
                 messagebox.showinfo("Succès", f"Connexion réussie ! Bienvenue {nom_decrypt} !") 
+                identifiant_valide = identifiant
+                cle_user_valide = cle_user
                 identification_fenetre.destroy() 
-                return identifiant, cle_user
+                return
             else:
                 NB_ESSAIS += 1
                 messagebox.showerror("Erreur", f"MDP incorrect ({NB_ESSAIS}/3)")
@@ -40,7 +46,7 @@ def identification_mainloop():
 
         if NB_ESSAIS >= 3:
             messagebox.showerror("Bloqué", "Trop de tentatives. Fermeture.") 
-            identification_fenetre.destroy()
+            identification_fenetre.destroy() 
 
     def ajouter_chiffre(chiffre):
         nouveau_mdp = entry_mdp_var.get() + str(chiffre)
@@ -71,13 +77,13 @@ def identification_mainloop():
     tk.Label(frm_inputs, text="ID", font=("Arial", 18), bg="white").grid(row=0, column=0, padx=10)
     entry_id = tk.Entry(frm_inputs, font=("Arial", 18), bd=2, relief="solid")
     entry_id.grid(row=0, column=1, pady=10)
-
+    
     tk.Label(frm_inputs, text="MDP", font=("Arial", 18), bg="white").grid(row=1, column=0, padx=10)
     entry_mdp_var = tk.StringVar()
     entry_mdp = tk.Entry(frm_inputs, textvariable=entry_mdp_var, font=("Arial", 18), show="*", bd=2, relief="solid")
     entry_mdp.grid(row=1, column=1, pady=10)
     entry_mdp.bind("<Key>", lambda e: "break")
-
+    
     chk_montrer = tk.Checkbutton(identification_fenetre, text="MONTRER MDP", font=("Arial", 13), bg="white", command=montrer_mdp)
     chk_montrer.place(in_=entry_mdp, relx=1.0, x=15, rely=0.5, anchor="w")
 
@@ -130,3 +136,5 @@ def identification_mainloop():
     btn_connect.pack(pady=20)
 
     identification_fenetre.mainloop()
+    
+    return identifiant_valide, cle_user_valide

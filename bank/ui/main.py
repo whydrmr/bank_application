@@ -5,6 +5,7 @@ def se_connecter():
     """
     verification de ID et MDP
     """
-    identification_mainloop()
-
+    id, cle_user = identification_mainloop()
+    print("juste pour etre sur : ", id, cle_user)
+    
 se_connecter()
