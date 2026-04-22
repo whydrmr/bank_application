@@ -1,11 +1,13 @@
-from .identification_ui_v2 import identification_mainloop
-
+from .identification_ui import identification_mainloop
+from .menu_ui import ouvrir_menu
 
 def se_connecter():
     """
     verification de ID et MDP
     """
-    id, cle_user = identification_mainloop()
-    print("juste pour etre sur : ", id, cle_user)
+    fenetre, id, cle_user = identification_mainloop()
     
+    if id is not None:
+        ouvrir_menu(fenetre, id, cle_user)
+
 se_connecter()

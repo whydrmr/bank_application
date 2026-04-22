@@ -1,8 +1,9 @@
 import tkinter as tk
 
-
-def ouvrir_gestion_budget(fenetre_principale):
-    fenetre_gestion_budget = tk.Toplevel(fenetre_principale)
+# CORRECTION : ajout du paramètre fenetre_parente
+def ouvrir_gestion_budget(fenetre_parente): 
+    # CORRECTION : utilisation de Toplevel pour créer une fenêtre secondaire
+    fenetre_gestion_budget = tk.Toplevel(fenetre_parente)
     fenetre_gestion_budget.title("Gestion de Budget")
     fenetre_gestion_budget.geometry("500x500")
 
@@ -12,4 +13,5 @@ def ouvrir_gestion_budget(fenetre_principale):
     tk.Button(
         fenetre_gestion_budget, text="Fermer", command=fenetre_gestion_budget.destroy
     ).pack(expand=True)
-
+    
+    # SUPPRESSION de fenetre_gestion_budget.mainloop()

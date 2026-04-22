@@ -26,6 +26,8 @@ def ouvrir_menu(fenetre_parente, id_compte, cle):
         command=lambda: gestion_budget_ui.ouvrir_gestion_budget(fenetre_menu),
     ).pack(expand=True)
 
-    tk.Button(fenetre_menu, text="Fermer", command=fenetre_menu.destroy).pack(
+    tk.Button(fenetre_menu, text="Fermer", command=fenetre_parente.destroy).pack(
         expand=True
     )
+    
+    fenetre_menu.mainloop()
