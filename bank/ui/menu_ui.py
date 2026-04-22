@@ -3,7 +3,7 @@ from . import gestion_compte_ui
 from . import gestion_budget_ui
 
 
-def ouvrir_menu(fenetre_parente):
+def ouvrir_menu(fenetre_parente, id_compte, cle):
     fenetre_menu = tk.Toplevel(fenetre_parente)
     fenetre_menu.title("Menu Principal")
     fenetre_menu.geometry("1000x1000")
@@ -15,7 +15,9 @@ def ouvrir_menu(fenetre_parente):
     tk.Button(
         fenetre_menu,
         text="Aller à la Gestion de compte",
-        command=lambda: gestion_compte_ui.ouvrir_gestion_compte(fenetre_menu),
+        command=lambda: gestion_compte_ui.main_gestion_compte(
+            fenetre_menu, id_compte, cle
+        ),
     ).pack(expand=True)
 
     tk.Button(
