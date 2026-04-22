@@ -4,14 +4,7 @@ from datetime import date
 from ..core import gestion_compte
 
 
-def init_f(base_d, base_b, id):
-    global base_de_donnees, base_de_budgets, id_compte
-    base_de_donnees = base_d
-    base_de_budgets = base_b
-    id_compte = id
-
-
-def action_virement(dep, dest, montant, date):
+def action_virement(base_de_donnees, id_compte, dep, dest, montant, date):
     compte_1 = dep.get().lower().replace(" ", "_")
     compte_2 = dest.get().lower().replace(" ", "_")
     somme = float(montant.get())
@@ -20,19 +13,17 @@ def action_virement(dep, dest, montant, date):
     gestion_compte.virement(base_de_donnees, id_compte, compte_1, compte_2, somme, date)
 
 
-# def action_ajouter_operation():
-# #add logic
-# addop(fenetre_gestion_compte)
+# def action_ajouter_operation(base_de_donnees, id_compte, date, libelle, montant, choixtyp, choixbud):
 
 
-def action_ajouter_compte(nom_cpt):
+def action_ajouter_compte(base_de_donnees, base_de_budgets, id_compte, nom_cpt):
     gestion_compte.ajouter_compte(
         base_de_donnees, base_de_budgets, id_compte, nom_cpt.get()
     )
 
 
-def virement():
-    fenetre_virement = tk.Tk()
+def virement(fenetre_gestion_compte, base_de_donnees, id_compte):
+    fenetre_virement = tk.Toplevel(fenetre_gestion_compte)
     fenetre_virement.title("Virement")
     fenetre_virement.geometry("1000x1000")
 
@@ -73,7 +64,9 @@ def virement():
     tk.Button(
         frm_virement,
         text="Valider",
-        command=lambda: action_virement(dep, dest, montant, date.today()),
+        command=lambda: action_virement(
+            base_de_donnees, id_compte, dep, dest, montant, date.today()
+        ),
     ).pack(expand=True, pady=(75, 0))
 
     tk.Button(fenetre_virement, text="Fermer", command=fenetre_virement.destroy).pack(
@@ -81,8 +74,8 @@ def virement():
     )
 
 
-def addop():
-    fen_op = tk.Tk()
+def addop(fenetre_gestion_compte, base_de_donnees, base_de_budgets, id_compte, compte):
+    fen_op = tk.Toplevel(fenetre_gestion_compte)
     fen_op.title("Ajouter une opération")
     fen_op.geometry("1000x1000")
 
@@ -96,31 +89,27 @@ def addop():
     tk.Label(frm_date, text="Date :", font=("", 16), width=10, anchor=tk.W).pack(
         side=tk.LEFT
     )
-    tk.Entry(frm_date, font=("", 14), width=20).pack(side=tk.LEFT)
+    date = tk.Entry(frm_date, font=("", 14), width=20).pack(side=tk.LEFT)
 
     frm_libelle = tk.Frame(frm_op)
     frm_libelle.pack(anchor=tk.W, pady=5)
     tk.Label(frm_libelle, text="Libellé :", font=("", 16), width=10, anchor=tk.W).pack(
         side=tk.LEFT
     )
-    tk.Entry(frm_libelle, font=("", 14), width=20).pack(side=tk.LEFT)
+    libelle = tk.Entry(frm_libelle, font=("", 14), width=20).pack(side=tk.LEFT)
 
     frm_montant = tk.Frame(frm_op)
     frm_montant.pack(anchor=tk.W, pady=5)
     tk.Label(frm_montant, text="Montant :", font=("", 16), width=10, anchor=tk.W).pack(
         side=tk.LEFT
     )
-    tk.Entry(frm_montant, font=("", 14), width=20).pack(side=tk.LEFT)
+    montant = tk.Entry(frm_montant, font=("", 14), width=20).pack(side=tk.LEFT)
 
     frm_typ = tk.Frame(frm_op)
     frm_typ.pack(anchor=tk.W, pady=5)
     tk.Label(frm_typ, text="Type :", font=("", 16), width=10, anchor=tk.W).pack(
         side=tk.LEFT
     )
-
-    choixtyp = ["CB", "VIR"]
-    cbb_choixtyp = Combobox(frm_typ, values=choixtyp)
-    cbb_choixtyp.pack(expand=True)
 
     frm_bud = tk.Frame(frm_op)
     frm_bud.pack(anchor=tk.W, pady=5)
@@ -135,13 +124,21 @@ def addop():
     frm_button = tk.Frame(fen_op)
     frm_button.pack(pady=20)
 
+    tk.Button(
+        frm_button,
+        text="Valider",
+        command=lambda: action_ajouter_operation(
+            base_de_donnees, id_compte, compte, date, libelle, montant, choixbud
+        ),
+    ).pack(expand=True, pady=(75, 0))
+
     tk.Button(frm_button, text="Annuler", command=fen_op.destroy).pack(
         side=tk.LEFT, padx=10
     )
 
 
-def addcompte():
-    fen_compte = tk.Tk()
+def addcompte(fenetre_gestion_compte, base_de_donnees, base_de_budgets, id_compte):
+    fen_compte = tk.Toplevel(fenetre_gestion_compte)
     fen_compte.title("Ajouter un compte")
     fen_compte.geometry("1000x1000")
 
@@ -172,11 +169,16 @@ def addcompte():
     )
 
     tk.Button(
-        frm_button, text="Ajouter", command=lambda: action_ajouter_compte(nom)
+        frm_button,
+        text="Ajouter",
+        command=lambda: action_ajouter_compte(
+            base_de_donnees, base_de_budgets, id_compte, nom
+        ),
     ).pack(side=tk.LEFT, padx=10)
 
 
-def ouvrir_gestion_compte(fenetre_principale):
+def main_gestion_compte(fenetre_principale, id_compte, cle, compte):
+    base_de_donnees, base_de_budgets = gestion_compte.charger_donnees(cle)
     fenetre_gestion_compte = tk.Toplevel(fenetre_principale)
     fenetre_gestion_compte.title("Gestion de compte")
     fenetre_gestion_compte.geometry("1000x1000")
@@ -193,16 +195,24 @@ def ouvrir_gestion_compte(fenetre_principale):
     tk.Button(
         fenetre_gestion_compte,
         text="+ ajouter opération",
-        command=addop,
+        command=lambda: addop(
+            fenetre_gestion_compte, base_de_donnees, base_de_budgets, id_compte, compte
+        ),
     ).pack(expand=True)
 
-    tk.Button(fenetre_gestion_compte, text="+ faire virement", command=virement).pack(
-        expand=True
-    )
+    tk.Button(
+        fenetre_gestion_compte,
+        text="+ faire virement",
+        command=lambda: virement(fenetre_gestion_compte, base_de_donnees, id_compte),
+    ).pack(expand=True)
 
-    tk.Button(fenetre_gestion_compte, text="+ ajouter compte", command=addcompte).pack(
-        expand=True
-    )
+    tk.Button(
+        fenetre_gestion_compte,
+        text="+ ajouter compte",
+        command=lambda: addcompte(
+            fenetre_gestion_compte, base_de_donnees, base_de_budgets, id_compte
+        ),
+    ).pack(expand=True)
 
     tk.Button(
         fenetre_gestion_compte, text="Fermer", command=fenetre_gestion_compte.destroy
