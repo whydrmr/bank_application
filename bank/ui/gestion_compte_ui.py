@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter.ttk import Combobox
+from tkcalendar import Calendar, DateEntry
 from datetime import date
 from ..core import gestion_compte
 
@@ -75,7 +76,7 @@ def virement(fenetre_gestion_compte, base_de_donnees, base_de_budgets, id_compte
     lbl_compte_dep = tk.Label(frm_depart, text="Compte de départ :", font=("", 16))
     lbl_compte_dep.pack(side=tk.LEFT, padx=(16, 0), expand=True)
 
-    dep = Combobox(frm_depart, values=liste_compte)
+    dep = Combobox(frm_depart, values=liste_compte, state="readonly")
     dep.pack(expand=True)
 
     # Compte destinataire
@@ -85,16 +86,16 @@ def virement(fenetre_gestion_compte, base_de_donnees, base_de_budgets, id_compte
     lbl_compte_dest = tk.Label(frm_dest, text="Compte destinataire :", font=("", 16))
     lbl_compte_dest.pack(side=tk.LEFT, padx=(20, 0), pady=(45, 50), expand=True)
 
-    dest = Combobox(frm_dest, values=liste_compte)
+    dest = Combobox(frm_dest, values=liste_compte, state="readonly")
     dest.pack(expand=True)
 
     frm_montant = tk.Frame(frm_virement)
     frm_montant.pack(anchor=tk.CENTER, expand=True)
-    tk.Label(frm_montant, text="Montant :", font=("", 16), width=10, anchor=tk.W).pack(
-        side=tk.LEFT, padx=(50, 0)
-    )
-    montant = tk.Entry(frm_montant, font=("", 14), width=10)
+    tk.Label(frm_montant, text="Montant :", font=("", 16), width=10, anchor=tk.W).pack(side=tk.LEFT, padx=(50, 0))
+    verif_int = (fenetre_virement.register(gestion_compte.validation_montant), '%P')
+    montant = tk.Entry(frm_montant, font=("", 14), width=10, validate = "key", validatecommand = verif_int)
     montant.pack(side=tk.LEFT)
+    
 
     tk.Button(
         frm_virement,
@@ -104,7 +105,7 @@ def virement(fenetre_gestion_compte, base_de_donnees, base_de_budgets, id_compte
         ),
     ).pack(expand=True, pady=(75, 0))
 
-    tk.Button(fenetre_virement, text="Fermer", command=fenetre_virement.destroy).pack(
+    tk.Button(fenetre_virement, text="Annuler", command=fenetre_virement.destroy).pack(
         expand=True, pady=(0, 2)
     )
 
@@ -128,16 +129,23 @@ def addop(fenetre_gestion_compte, base_de_donnees, base_de_budgets, id_compte, c
     frm_compte = tk.Frame(frm_op)
     frm_compte.pack(anchor=tk.W, pady=5)
     tk.Label(frm_compte, text="Compte :", font=("", 16), width=10, anchor=tk.W).pack(side=tk.LEFT)
-    cbb_choixCOMPTE = Combobox(frm_compte, values=liste_compte)
+    cbb_choixCOMPTE = Combobox(frm_compte, values=liste_compte, state="readonly")
     cbb_choixCOMPTE.pack(side=tk.LEFT)
 
     #DATE
+    
     frm_date = tk.Frame(frm_op)
     frm_date.pack(anchor=tk.W, pady=5)
     tk.Label(frm_date, text="Date :", font=("", 16), width=10, anchor=tk.W).pack(side=tk.LEFT)
-    date = tk.Entry(frm_date, font=("", 14), width=20)
+
+    date = DateEntry(
+        frm_date, 
+        font = ("", 14), 
+        width = 18, 
+        date_pattern = "dd/mm/yyyy", 
+        state = "readonly"
+    )
     date.pack(side=tk.LEFT)
-    #jai eu la flemme mais faire en sorte que si ya rien dans le cadre, mettre la date au moment T
 
     #LIBELLE
     frm_libelle = tk.Frame(frm_op)
@@ -150,7 +158,14 @@ def addop(fenetre_gestion_compte, base_de_donnees, base_de_budgets, id_compte, c
     frm_montant = tk.Frame(frm_op)
     frm_montant.pack(anchor=tk.W, pady=5)
     tk.Label(frm_montant, text="Montant :", font=("", 16), width=10, anchor=tk.W).pack(side=tk.LEFT)
-    montant = tk.Entry(frm_montant, font=("", 14), width=20)
+    verif_int = (fen_op.register(gestion_compte.validation_montant), '%P') #Proposed donc le texte total dans le frame budget (verifie tout en gros)
+    montant = tk.Entry(
+        frm_montant, 
+        font = ("", 14), 
+        width = 20, 
+        validate = "key", #quand je tape au clavier
+        validatecommand = verif_int
+    )
     montant.pack(side=tk.LEFT)
 
     #TYPE (VIR OPT)
@@ -158,7 +173,7 @@ def addop(fenetre_gestion_compte, base_de_donnees, base_de_budgets, id_compte, c
     frm_typ.pack(anchor=tk.W, pady=5)
     tk.Label(frm_typ, text="Type :", font=("", 16), width=10, anchor=tk.W).pack(side=tk.LEFT)
     choixVIR = ["VIR", 'OPT']
-    cbb_choixVIR = Combobox(frm_typ, values=choixVIR)
+    cbb_choixVIR = Combobox(frm_typ, values=choixVIR, state="readonly")
     cbb_choixVIR.pack(expand=True)
 
     #BUDGET
@@ -166,7 +181,7 @@ def addop(fenetre_gestion_compte, base_de_donnees, base_de_budgets, id_compte, c
     frm_bud.pack(anchor=tk.W, pady=5)
     tk.Label(frm_bud, text="Budget :", font=("", 16), width=10, anchor=tk.W).pack(side=tk.LEFT)
     choixbud = ["sorties", "divers", "alimentation"]
-    cbb_choixbud = Combobox(frm_bud, values=choixbud)
+    cbb_choixbud = Combobox(frm_bud, values=choixbud, state="readonly")
     cbb_choixbud.pack(expand=True)
 
     frm_button = tk.Frame(fen_op)
@@ -206,13 +221,14 @@ def addcompte(fenetre_gestion_compte, base_de_donnees, base_de_budgets, id_compt
 
     frm_solde = tk.Frame(frm_compte)
     frm_solde.pack(anchor=tk.W, pady=10)
+    tk.Label(frm_solde, text="Solde initial : ", font=("", 16), width=15, anchor=tk.W).pack(side=tk.LEFT)
+    verif_int = (fen_compte.register(gestion_compte.validation_montant), '%P') #Proposed donc le texte total dans le frame (verifie tout en gros)
+    montant = tk.Entry(frm_solde, font=("", 14), width=20, validate = "key", validatecommand = verif_int)
+    montant.pack(side=tk.LEFT)
 
     frm_button = tk.Frame(fen_compte)
     frm_button.pack(pady=20)
-
-    tk.Label(frm_solde, text="Solde initial : ", font=("", 16), width=15, anchor=tk.W).pack(side=tk.LEFT)
-    tk.Entry(frm_solde, font=("", 14), width=20).pack(side=tk.LEFT)
-
+    
     tk.Button(frm_button, text="Annuler", command=fen_compte.destroy).pack(
         side=tk.LEFT, padx=10
     )
@@ -261,7 +277,6 @@ def main_gestion_compte(fenetre_principale, id_compte, cle, compte, blase, dir_u
         
         for nom, solde in soldes_par_compte.items():
             #couleur_texte = "green" if solde >= 0 else "red"
-            #texte_solde = f"{solde:+.2f} €".replace("+", "+ ").replace("-", "- ")
             
             frm_ligne = tk.Frame(frm_details)
             frm_ligne.pack(fill=tk.X, pady=2)

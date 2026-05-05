@@ -133,6 +133,19 @@ def virement(base_de_donnees, id_compte, compte_1, compte_2, somme, date_op):
 
     return base_de_donnees
 
+def validation_montant(montant):
+    """input -> bool
+    verifie la typo de chaque input pour le mdp et l'id
+    """
+    valeur = montant.replace(",", ".")
+    
+    if valeur in ("", "+", "-"):
+        return True
+    try:
+        float(valeur)
+        return True
+    except ValueError:
+        return False
 
 def main_gestion_compte(id_compte, cle):
     base_de_donnees, base_de_budgets = charger_donnees("bank/core/users", cle)

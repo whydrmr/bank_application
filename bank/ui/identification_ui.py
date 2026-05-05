@@ -19,7 +19,7 @@ def identification_mainloop():
         global NB_ESSAIS
         nonlocal identifiant_valide, cle_user_valide, nom_decrypt_valide
         identifiant = entry_id.get() #c'est  le compte de Nima '23456789' 
-        mdp = entry_mdp_var.get() #'23456789' 
+        mdp = entry_mdp_var.get() #'000000' 
 
         if not IDTXT.validation_typo(identifiant, 8):
             messagebox.showwarning("Erreur ID", "L'ID doit contenir 8 chiffres.")

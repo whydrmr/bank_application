@@ -23,6 +23,7 @@ MNC*6460/49/49*Tgpckclr*Rcqr*TGP*-624.4*Rpsc*
 MNC*6460/49/49*Tgpckclr*Rcqr*TGP*044.4*Rpsc*
 MNC*6460/49/49*Tgpckclr*Rcqr*TGP*-944.4*Rpsc*
 MNC*YHB*YHB*Rcqr*AZ*567.4*Dyjqc*bgtcpq
+MNC*49/49/6460*RcqrDglyj*Rcqr*AZ*-568.4*TGP*yjgkclryrgml
 ANR*Cl Amspq
 ANR*Tpkr
 MNC*YHB*Dglyj*Tpkr*AZ*744.4*Dyjqc*bgtcpq
