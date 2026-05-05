@@ -3,7 +3,7 @@ from . import gestion_compte_ui
 from . import gestion_budget_ui
 
 
-def ouvrir_menu(fenetre_parente, id_compte, cle):
+def ouvrir_menu(fenetre_parente, id_compte, cle, blase, dir_user = 'bank/core/users'):
     fenetre_menu = tk.Toplevel(fenetre_parente)
     fenetre_menu.title("Menu Principal")
     fenetre_menu.geometry("1000x1000")
@@ -16,7 +16,7 @@ def ouvrir_menu(fenetre_parente, id_compte, cle):
         fenetre_menu,
         text="Aller à la Gestion de compte",
         command=lambda: gestion_compte_ui.main_gestion_compte(
-            fenetre_menu, id_compte, cle
+            fenetre_menu, id_compte, cle, dir_user, blase
         ),
     ).pack(expand=True)
 

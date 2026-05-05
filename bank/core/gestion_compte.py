@@ -75,7 +75,7 @@ def sauvegarder_utilisateur(id_compte, base_de_donnees, base_de_budgets, cle):
     _____________________________________________________________________
 
     """
-    fichier = f"users/{id_compte}.txt"
+    fichier = f"bank/core/users/{id_compte}.txt"
     with open(fichier, "w", encoding="utf-8") as f:
         for compte, budgets in base_de_budgets[id_compte].items():
             nom_compte = compte.replace("_", " ").title()
@@ -135,5 +135,5 @@ def virement(base_de_donnees, id_compte, compte_1, compte_2, somme, date_op):
 
 
 def main_gestion_compte(id_compte, cle):
-    base_de_donnees, base_de_budgets = charger_donnees("users", cle)
+    base_de_donnees, base_de_budgets = charger_donnees("bank/core/users", cle)
     sauvegarder_utilisateur(id_compte, base_de_donnees, base_de_budgets, cle)

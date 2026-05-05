@@ -13,12 +13,13 @@ def identification_mainloop():
     #variable local mais pas local
     identifiant_valide = None
     cle_user_valide = None
+    nom_decrypt_valide = None
     
     def se_connecter():
         global NB_ESSAIS
-        nonlocal identifiant_valide, cle_user_valide
-        identifiant = entry_id.get()
-        mdp = entry_mdp_var.get()
+        nonlocal identifiant_valide, cle_user_valide, nom_decrypt_valide
+        identifiant = entry_id.get() #c'est  le compte de Nima '23456789' 
+        mdp = entry_mdp_var.get() #'23456789' 
 
         if not IDTXT.validation_typo(identifiant, 8):
             messagebox.showwarning("Erreur ID", "L'ID doit contenir 8 chiffres.")
@@ -35,6 +36,7 @@ def identification_mainloop():
                 messagebox.showinfo("Succès", f"Connexion réussie ! Bienvenue {nom_decrypt} !") 
                 identifiant_valide = identifiant
                 cle_user_valide = cle_user
+                nom_decrypt_valide = nom_decrypt
                 identification_fenetre.withdraw() 
                 identification_fenetre.quit()
                 return
@@ -139,4 +141,4 @@ def identification_mainloop():
 
     identification_fenetre.mainloop()
     
-    return identification_fenetre, identifiant_valide, cle_user_valide
+    return identification_fenetre, identifiant_valide, cle_user_valide, nom_decrypt_valide

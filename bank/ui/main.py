@@ -5,9 +5,10 @@ def se_connecter():
     """
     verification de ID et MDP
     """
-    fenetre, id, cle_user = identification_mainloop()
+    fenetre, id, cle_user, blase = identification_mainloop()
+    print(blase) #renvoie None
     
     if id is not None:
-        ouvrir_menu(fenetre, id, cle_user)
+        ouvrir_menu(fenetre, id, cle_user, blase)
 
 se_connecter()
