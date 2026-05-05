@@ -38,5 +38,5 @@ def creation_compte(id_user, cle_user, montant):
 
 # --- Exemple d'utilisation (à retirer ou commenter si importé ailleurs) ---
 if __name__ == "__main__":
-    # Test : Création du compte 99999999 avec la clé 17 et 500€ de solde
-    creation_compte("11111111", 24, 1500.0)
+    # Test : Création du compte xxxxxxxx avec la clé yy et iii€ de solde
+    creation_compte("11111111", 24, 1000.0)

@@ -4,9 +4,8 @@ from tkcalendar import Calendar, DateEntry
 from datetime import date
 from ..core import gestion_compte
 
-
 def action_virement(
-    base_de_donnees, base_de_budgets, id_compte, cle, dep, dest, montant, date, fenetre
+    base_de_donnees, base_de_budgets, id_compte, cle, dep, dest, montant, date, fenetre, refresh
 ):
     """correspondance etre le virement graphique UI et CORE"""
 
@@ -21,30 +20,23 @@ def action_virement(
         id_compte, base_de_donnees, base_de_budgets, cle
     )
     fenetre.destroy()
+    refresh()
 
 
-def action_ajouter_operation(
-    base_de_donnees,
-    base_de_budgets,
-    id_compte,
-    cle,
-    compte_selectionner,
-    date,
-    libelle,
-    montant,
-    choixtyp,
-    choixbud,
-    fenetre,
+def action_ajouter_operation(base_de_donnees, base_de_budgets, id_compte, cle, compte_selectionner, date, libelle, montant, choixtyp, choixbud, fenetre, refresh
 ):
     """correspondance etre les operations graphique UI et CORE"""
 
     # pour selectionner le compte qu'on veut utilisera
-    compte = compte_selectionner.get().lower().replace(" ", "_")
+    try:
+        compte = compte_selectionner.get().lower().replace(" ", "_") 
+    except AttributeError:
+        compte = compte_selectionner
 
     data = {
         "date": date.get(),
         "libelle": libelle.get(),
-        "montant": -float(montant.get()),
+        "montant": float(montant.get()),
         "verification": choixtyp.get(),  # verification n'est pas verification mais le type (VIR OU OPT) ducoup a revoir
         "budget": choixbud.get(),
     }
@@ -57,31 +49,49 @@ def action_ajouter_operation(
         id_compte, base_de_donnees, base_de_budgets, cle
     )
     fenetre.destroy()
+    refresh()
 
 
 def action_ajouter_compte(
-    base_de_donnees, base_de_budgets, id_compte, nom_cpt, cle, fenetre
+    base_de_donnees, base_de_budgets, id_compte, nom_cpt, montant, cle, fenetre, refresh
 ):
     """correspondance etre l'ajout de compte graphique UI et CORE"""
+    
+    nom = nom_cpt.get()
+    
     # ajouter a la mamoire
     gestion_compte.ajouter_compte(
-        base_de_donnees, base_de_budgets, id_compte, nom_cpt.get()
+        base_de_donnees, base_de_budgets, id_compte, nom
     )
+    
+    montant_Init = montant.get()
+    if montant_Init and montant_Init not in ("-", "+", ""):
+        cle_compte = nom.lower().replace(" ", "_")
+        data_op = {
+            "date": date.today().strftime("%d/%m/%Y"), # Date auto
+            "libelle": "Solde initial",
+            "montant": float(montant_Init),
+            "verification": "DEP",
+            "budget": "divers"
+        }
+        gestion_compte.operation(base_de_donnees, base_de_budgets, id_compte, cle_compte, data_op) 
+        
     # sauvegarder
     gestion_compte.sauvegarder_utilisateur(
         id_compte, base_de_donnees, base_de_budgets, cle
     )
     fenetre.destroy()
+    refresh()
 
 
-def virement(fenetre_gestion_compte, base_de_donnees, base_de_budgets, id_compte, cle):
+def virement(fenetre_gestion_compte, base_de_donnees, base_de_budgets, id_compte, cle, refresh):
     """interface graphique pour les virements inter-compte"""
-    fenetre_virement = tk.Toplevel(fenetre_gestion_compte)
-    # fenetre_gestion_compte.withdraw() permet de faire disparaitre la fenetre mere mais jcp comment la faire reapparaitre apres ...
-    fenetre_virement.title("Virement")
-    fenetre_virement.geometry("1000x1000")
+    fen_virement = tk.Toplevel(fenetre_gestion_compte)
+    fenetre_gestion_compte.withdraw() #permet de faire disparaitre la fenetre mere mais jcp comment la faire reapparaitre apres ...
+    fen_virement.title("Virement")
+    fen_virement.geometry("1000x1000")
 
-    frm_virement = tk.Frame(fenetre_virement)
+    frm_virement = tk.Frame(fen_virement)
     frm_virement.pack(expand=True, anchor=tk.CENTER)
 
     tk.Label(frm_virement, text="Virement", font=("", 25)).pack(
@@ -103,8 +113,8 @@ def virement(fenetre_gestion_compte, base_de_donnees, base_de_budgets, id_compte
     lbl_compte_dep = tk.Label(frm_depart, text="Compte de départ :", font=("", 16))
     lbl_compte_dep.pack(side=tk.LEFT, padx=(16, 0), expand=True)
 
-    dep = Combobox(frm_depart, values=liste_compte, state="readonly")
-    dep.pack(expand=True)
+    cbb_dep = Combobox(frm_depart, values=liste_compte, state="readonly")
+    cbb_dep.pack(expand=True)
 
     # Compte destinataire
     frm_dest = tk.Frame(frm_virement)
@@ -113,15 +123,15 @@ def virement(fenetre_gestion_compte, base_de_donnees, base_de_budgets, id_compte
     lbl_compte_dest = tk.Label(frm_dest, text="Compte destinataire :", font=("", 16))
     lbl_compte_dest.pack(side=tk.LEFT, padx=(20, 0), pady=(45, 50), expand=True)
 
-    dest = Combobox(frm_dest, values=liste_compte, state="readonly")
-    dest.pack(expand=True)
+    cbb_dest = Combobox(frm_dest, values=liste_compte, state="readonly")
+    cbb_dest.pack(expand=True)
 
     frm_montant = tk.Frame(frm_virement)
     frm_montant.pack(anchor=tk.CENTER, expand=True)
     tk.Label(frm_montant, text="Montant :", font=("", 16), width=10, anchor=tk.W).pack(
         side=tk.LEFT, padx=(50, 0)
     )
-    verif_int = (fenetre_virement.register(gestion_compte.validation_montant), "%P")
+    verif_int = (fen_virement.register(gestion_compte.validation_montant), "%P")
     montant = tk.Entry(
         frm_montant, font=("", 14), width=10, validate="key", validatecommand=verif_int
     )
@@ -135,31 +145,33 @@ def virement(fenetre_gestion_compte, base_de_donnees, base_de_budgets, id_compte
             base_de_budgets,
             id_compte,
             cle,
-            dep,
-            dest,
+            cbb_dep,
+            cbb_dest,
             montant,
             date.today(),
-            fenetre_virement,
+            fen_virement,
+            refresh
         ),
     ).pack(expand=True, pady=(75, 0))
 
-    tk.Button(fenetre_virement, text="Annuler", command=fenetre_virement.destroy).pack(
+    tk.Button(fen_virement, text="Annuler", command=fen_virement.destroy).pack(
         expand=True, pady=(0, 2)
     )
 
 
 def addop(
-    fenetre_gestion_compte, base_de_donnees, base_de_budgets, id_compte, compte, cle
+    fenetre_gestion_compte, base_de_donnees, base_de_budgets, id_compte, compte, cle, refresh
 ):
     """interface graphique pour les diverses operations"""
 
-    fen_op = tk.Toplevel(fenetre_gestion_compte)
-    fen_op.title("Ajouter une opération")
-    fen_op.geometry("1000x1000")
+    fen_addop = tk.Toplevel(fenetre_gestion_compte)
+    fenetre_gestion_compte.withdraw() #permet de faire disparaitre la fenetre mere mais jcp comment la faire reapparaitre apres ...
+    fen_addop.title("Ajouter une opération")
+    fen_addop.geometry("1000x1000")
 
-    tk.Label(fen_op, text="Ajouter une opération", font=("", 18)).pack(pady=20)
+    tk.Label(fen_addop, text="Ajouter une opération", font=("", 18)).pack(pady=20)
 
-    frm_op = tk.Frame(fen_op)
+    frm_op = tk.Frame(fen_addop)
     frm_op.pack(pady=20)
 
     # choix parmis les compte existants
@@ -177,7 +189,7 @@ def addop(
     )
     cbb_choixCOMPTE = Combobox(frm_compte, values=liste_compte, state="readonly")
     cbb_choixCOMPTE.pack(side=tk.LEFT)
-
+    
     # DATE
 
     frm_date = tk.Frame(frm_op)
@@ -207,7 +219,7 @@ def addop(
         side=tk.LEFT
     )
     verif_int = (
-        fen_op.register(gestion_compte.validation_montant),
+        fen_addop.register(gestion_compte.validation_montant),
         "%P",
     )  # Proposed donc le texte total dans le frame budget (verifie tout en gros)
     montant = tk.Entry(
@@ -239,11 +251,11 @@ def addop(
     cbb_choixbud = Combobox(frm_bud, values=choixbud, state="readonly")
     cbb_choixbud.pack(expand=True)
 
-    frm_button = tk.Frame(fen_op)
+    frm_button = tk.Frame(fen_addop)
     frm_button.pack(pady=20)
 
     tk.Button(
-        frm_button,
+        fen_addop,
         text="Valider",
         command=lambda: action_ajouter_operation(
             base_de_donnees,
@@ -256,25 +268,27 @@ def addop(
             montant,
             cbb_choixVIR,
             cbb_choixbud,
-            fen_op,
+            fen_addop,
+            refresh
         ),
     ).pack(expand=True, pady=(75, 0))
 
-    tk.Button(frm_button, text="Annuler", command=fen_op.destroy).pack(
+    tk.Button(frm_button, text="Annuler", command=fen_addop.destroy).pack(
         side=tk.LEFT, padx=10
     )
 
 
-def addcompte(fenetre_gestion_compte, base_de_donnees, base_de_budgets, id_compte, cle):
+def addcompte(fenetre_gestion_compte, base_de_donnees, base_de_budgets, id_compte, cle, refresh):
     """interface graphique pour ajouter un compte dans sa BDD"""
 
-    fen_compte = tk.Toplevel(fenetre_gestion_compte)
-    fen_compte.title("Ajouter un compte")
-    fen_compte.geometry("1000x1000")
+    fen_addcompte = tk.Toplevel(fenetre_gestion_compte)
+    fenetre_gestion_compte.withdraw() #permet de faire disparaitre la fenetre mere mais jcp comment la faire reapparaitre apres ...
+    fen_addcompte.title("Ajouter un compte")
+    fen_addcompte.geometry("1000x1000")
 
-    tk.Label(fen_compte, text="Ajouter un compte", font=("", 18)).pack(pady=20)
+    tk.Label(fen_addcompte, text="Ajouter un compte", font=("", 18)).pack(pady=20)
 
-    frm_compte = tk.Frame(fen_compte)
+    frm_compte = tk.Frame(fen_addcompte)
     frm_compte.pack(pady=20)
 
     frm_nom = tk.Frame(frm_compte)
@@ -293,7 +307,7 @@ def addcompte(fenetre_gestion_compte, base_de_donnees, base_de_budgets, id_compt
         frm_solde, text="Solde initial : ", font=("", 16), width=15, anchor=tk.W
     ).pack(side=tk.LEFT)
     verif_int = (
-        fen_compte.register(gestion_compte.validation_montant),
+        fen_addcompte.register(gestion_compte.validation_montant),
         "%P",
     )  # Proposed donc le texte total dans le frame (verifie tout en gros)
     montant = tk.Entry(
@@ -301,31 +315,36 @@ def addcompte(fenetre_gestion_compte, base_de_donnees, base_de_budgets, id_compt
     )
     montant.pack(side=tk.LEFT)
 
-    frm_button = tk.Frame(fen_compte)
+    frm_button = tk.Frame(fen_addcompte)
     frm_button.pack(pady=20)
 
-    tk.Button(frm_button, text="Annuler", command=fen_compte.destroy).pack(
+    tk.Button(frm_button, text="Annuler", command=fen_addcompte.destroy).pack(
         side=tk.LEFT, padx=10
     )
 
     tk.Button(
         frm_button,
-        text="Ajouter",
-        command=lambda: action_ajouter_compte(
-            base_de_donnees, base_de_budgets, id_compte, nom, cle, fen_compte
-        ),
+        text = "Ajouter",
+        command = lambda: (
+            action_ajouter_compte(base_de_donnees, base_de_budgets, id_compte, nom, montant, cle, fen_addcompte, refresh),
+        )
     ).pack(side=tk.LEFT, padx=10)
 
 
 def main_gestion_compte(
     fenetre_principale, id_compte, cle, compte, blase, dir_user="bank/core/users"
 ):
+    
     """interface graphique qui regroupe tout"""
 
     base_de_donnees, base_de_budgets = gestion_compte.charger_donnees(dir_user, cle)
     fenetre_gestion_compte = tk.Toplevel(fenetre_principale)
     fenetre_gestion_compte.title("Gestion de compte")
     fenetre_gestion_compte.geometry("1000x1000")
+    
+    def refresh():
+        fenetre_gestion_compte.destroy()
+        main_gestion_compte(fenetre_principale, id_compte, cle, compte, blase, dir_user)
 
     tk.Label(
         fenetre_gestion_compte,
@@ -352,7 +371,7 @@ def main_gestion_compte(
         frm_details.pack(pady=20)
 
         for nom, solde in soldes_par_compte.items():
-            # couleur_texte = "green" if solde >= 0 else "red"
+            couleur_texte = "green" if solde >= 0 else "red"
 
             frm_ligne = tk.Frame(frm_details)
             frm_ligne.pack(fill=tk.X, pady=2)
@@ -361,7 +380,7 @@ def main_gestion_compte(
                 side=tk.LEFT
             )
             tk.Label(
-                frm_ligne, text=solde, font=("", 12, "bold"), width=15, anchor="e"
+                frm_ligne, text=solde, font=("", 12, "bold"), width=15, anchor="e", fg=couleur_texte
             ).pack(side=tk.RIGHT)  # fg=couleur_texte
 
     frm_montant = tk.Frame(fenetre_gestion_compte)
@@ -388,6 +407,7 @@ def main_gestion_compte(
             id_compte,
             compte,
             cle,
+            refresh 
         ),
     ).pack(expand=True)
 
@@ -395,7 +415,7 @@ def main_gestion_compte(
         fenetre_gestion_compte,
         text="+ faire virement",
         command=lambda: virement(
-            fenetre_gestion_compte, base_de_donnees, base_de_budgets, id_compte, cle
+            fenetre_gestion_compte, base_de_donnees, base_de_budgets, id_compte, cle, refresh
         ),
     ).pack(expand=True)
 
@@ -403,7 +423,7 @@ def main_gestion_compte(
         fenetre_gestion_compte,
         text="+ ajouter compte",
         command=lambda: addcompte(
-            fenetre_gestion_compte, base_de_donnees, base_de_budgets, id_compte, cle
+            fenetre_gestion_compte, base_de_donnees, base_de_budgets, id_compte, cle, refresh 
         ),
     ).pack(expand=True)
 
