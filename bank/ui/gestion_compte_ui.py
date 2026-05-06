@@ -57,7 +57,7 @@ def action_ajouter_operation(
     data = {
         "date": date.get(),
         "libelle": libelle.get(),
-        "montant": float(montant.get()),
+        "montant": -float(montant.get()),
         "budget": choixbud.get(),
     }
 
