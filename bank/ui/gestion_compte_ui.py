@@ -196,10 +196,12 @@ def addop(
     fen_addop.title("Ajouter une opération")
     fen_addop.geometry("1000x1000")
 
-    tk.Label(fen_addop, text="Ajouter une opération", font=("", 18)).pack(pady=20)
+    tk.Label(fen_addop, text="Ajouter une opération", font=("Arial", 30, "bold")).pack(
+        pady=80
+    )
 
     frm_op = tk.Frame(fen_addop)
-    frm_op.pack(pady=20)
+    frm_op.pack(pady=50)
 
     # choix parmis les compte existants
     liste_compte = []
@@ -210,49 +212,59 @@ def addop(
         ]
 
     frm_compte = tk.Frame(frm_op)
-    frm_compte.pack(anchor=tk.W, pady=5)
-    tk.Label(frm_compte, text="Compte :", font=("", 16), width=10, anchor=tk.W).pack(
-        side=tk.LEFT
+    frm_compte.pack(anchor=tk.W, pady=20)
+    tk.Label(
+        frm_compte, text="Compte :", font=("Arial", 20, "bold"), width=10, anchor=tk.W
+    ).pack(side=tk.LEFT)
+    cbb_choixCOMPTE = Combobox(
+        frm_compte,
+        values=liste_compte,
+        state="readonly",
+        font=("Arial", 15, "bold"),
+        width=30,
     )
-    cbb_choixCOMPTE = Combobox(frm_compte, values=liste_compte, state="readonly")
     cbb_choixCOMPTE.pack(side=tk.LEFT)
 
     # DATE
 
     frm_date = tk.Frame(frm_op)
-    frm_date.pack(anchor=tk.W, pady=5)
-    tk.Label(frm_date, text="Date :", font=("", 16), width=10, anchor=tk.W).pack(
-        side=tk.LEFT
-    )
+    frm_date.pack(anchor=tk.W, pady=20)
+    tk.Label(
+        frm_date, text="Date :", font=("Arial", 20, "bold"), width=10, anchor=tk.W
+    ).pack(side=tk.LEFT)
 
     date = DateEntry(
-        frm_date, font=("", 14), width=18, date_pattern="dd/mm/yyyy", state="readonly"
+        frm_date,
+        font=("Arial", 20, "bold"),
+        width=30,
+        date_pattern="dd/mm/yyyy",
+        state="readonly",
     )
     date.pack(side=tk.LEFT)
 
     # LIBELLE
     frm_libelle = tk.Frame(frm_op)
-    frm_libelle.pack(anchor=tk.W, pady=5)
-    tk.Label(frm_libelle, text="Libellé :", font=("", 16), width=10, anchor=tk.W).pack(
-        side=tk.LEFT
-    )
-    libelle = tk.Entry(frm_libelle, font=("", 14), width=20)
+    frm_libelle.pack(anchor=tk.W, pady=20)
+    tk.Label(
+        frm_libelle, text="Libellé :", font=("Arial", 20, "bold"), width=10, anchor=tk.W
+    ).pack(side=tk.LEFT)
+    libelle = tk.Entry(frm_libelle, font=("Arial", 20, "bold"), width=10)
     libelle.pack(side=tk.LEFT)
 
     # MONTANT
     frm_montant = tk.Frame(frm_op)
-    frm_montant.pack(anchor=tk.W, pady=5)
-    tk.Label(frm_montant, text="Montant :", font=("", 16), width=10, anchor=tk.W).pack(
-        side=tk.LEFT
-    )
+    frm_montant.pack(anchor=tk.W, pady=20)
+    tk.Label(
+        frm_montant, text="Montant :", font=("Arial", 20, "bold"), width=10, anchor=tk.W
+    ).pack(side=tk.LEFT)
     verif_int = (
         fen_addop.register(gestion_compte.validation_montant),
         "%P",
     )  # Proposed donc le texte total dans le frame budget (verifie tout en gros)
     montant = tk.Entry(
         frm_montant,
-        font=("", 14),
-        width=20,
+        font=("Arial", 20, "bold"),
+        width=10,
         validate="key",  # quand je tape au clavier
         validatecommand=verif_int,
     )
@@ -260,12 +272,14 @@ def addop(
 
     # BUDGET
     frm_bud = tk.Frame(frm_op)
-    frm_bud.pack(anchor=tk.W, pady=5)
-    tk.Label(frm_bud, text="Budget :", font=("", 16), width=10, anchor=tk.W).pack(
-        side=tk.LEFT
-    )
+    frm_bud.pack(anchor=tk.W, pady=20)
+    tk.Label(
+        frm_bud, text="Budget :", font=("Arial", 20, "bold"), width=10, anchor=tk.W
+    ).pack(side=tk.LEFT)
     choixbud = ["sorties", "divers", "alimentation"]
-    cbb_choixbud = Combobox(frm_bud, values=choixbud, state="readonly")
+    cbb_choixbud = Combobox(
+        frm_bud, values=choixbud, state="readonly", font=("Arial", 15, "bold"), width=30
+    )
     cbb_choixbud.pack(expand=True)
 
     frm_button = tk.Frame(fen_addop)
@@ -274,6 +288,7 @@ def addop(
     tk.Button(
         fen_addop,
         text="Valider",
+        font=("Arial", 18, "bold"),
         command=lambda: action_ajouter_operation(
             base_de_donnees,
             base_de_budgets,
@@ -287,11 +302,11 @@ def addop(
             fen_addop,
             refresh,
         ),
-    ).pack(expand=True, pady=(75, 0))
+    ).pack(pady=(50, 70))
 
-    tk.Button(frm_button, text="Annuler", command=fen_addop.destroy).pack(
-        side=tk.LEFT, padx=10
-    )
+    tk.Button(
+        fen_addop, text="Annuler", font=("Arial", 12, "bold"), command=fen_addop.destroy
+    ).pack(padx=10, pady=(50, 20))
 
 
 def addcompte(
