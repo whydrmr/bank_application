@@ -187,6 +187,7 @@ def addop(
     base_de_budgets,
     id_compte,
     cle,
+    compte_selectionne,
     refresh,
 ):
     """interface graphique pour les diverses operations"""
@@ -202,28 +203,6 @@ def addop(
 
     frm_op = tk.Frame(fen_addop)
     frm_op.pack(pady=50)
-
-    # choix parmis les compte existants
-    liste_compte = []
-    if id_compte in base_de_donnees:
-        liste_compte = [
-            compte.replace("_", " ").title()
-            for compte in base_de_donnees[id_compte].keys()
-        ]
-
-    frm_compte = tk.Frame(frm_op)
-    frm_compte.pack(anchor=tk.W, pady=20)
-    tk.Label(
-        frm_compte, text="Compte :", font=("Arial", 20, "bold"), width=10, anchor=tk.W
-    ).pack(side=tk.LEFT)
-    cbb_choixCOMPTE = Combobox(
-        frm_compte,
-        values=liste_compte,
-        state="readonly",
-        font=("Arial", 15, "bold"),
-        width=30,
-    )
-    cbb_choixCOMPTE.pack(side=tk.LEFT)
 
     # DATE
 
@@ -294,7 +273,7 @@ def addop(
             base_de_budgets,
             id_compte,
             cle,
-            cbb_choixCOMPTE,
+            compte_selectionne,
             date,
             libelle,
             montant,
@@ -393,6 +372,35 @@ def main_gestion_compte(
         font=("Arial", 30, "bold"),
     ).pack(pady=(60, 50))
 
+    frm_select_compte = tk.Frame(fenetre_gestion_compte)
+    frm_select_compte.pack(anchor="e", padx=150, pady=10)
+
+    tk.Label(
+        frm_select_compte,
+        text="Compte actuel :",
+        font=("Arial", 20, "bold"),
+    ).pack(side=tk.LEFT, padx=10)
+
+    liste_compte = [
+        compte.replace("_", " ").title()
+        for compte in base_de_donnees[id_compte].keys()
+        if compte and compte.strip()
+    ]
+
+    cbb_compte_principal = Combobox(
+        frm_select_compte,
+        values=liste_compte,
+        state="readonly",
+        font=("Arial", 14, "bold"),
+        width=25,
+    )
+
+    cbb_compte_principal.pack(side=tk.LEFT)
+
+    # autoselection du premier compte
+    if liste_compte:
+        cbb_compte_principal.current(0)
+
     # calcul argent individuel et total
     solde_total = 0.0
     soldes_par_compte = {}
@@ -444,7 +452,7 @@ def main_gestion_compte(
             ).pack(side=tk.RIGHT)  # fg=couleur_texte
 
     frame_actions = tk.Frame(fenetre_gestion_compte)
-    frame_actions.pack(pady=100)
+    frame_actions.pack(pady=70)
 
     tk.Button(
         frame_actions,
@@ -458,6 +466,7 @@ def main_gestion_compte(
             base_de_budgets,
             id_compte,
             cle,
+            cbb_compte_principal.get().lower().replace(" ", "_"),
             refresh,
         ),
     ).grid(row=0, column=0, padx=20)
@@ -500,4 +509,4 @@ def main_gestion_compte(
         font=("Arial", 12, "bold"),
         width=20,
         command=fenetre_gestion_compte.destroy,
-    ).pack(pady=60)
+    ).pack(pady=40)
