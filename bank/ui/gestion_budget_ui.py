@@ -2,7 +2,6 @@ import tkinter as tk
 from tkinter import messagebox
 from tkinter.ttk import Combobox, Treeview, Scrollbar
 from datetime import datetime
-import os
 from ..core import gestion_compte
 
 def ouvrir_gestion_budget(fenetre_parente, id_compte, cle, dir_user): 
@@ -45,18 +44,22 @@ def ouvrir_gestion_budget(fenetre_parente, id_compte, cle, dir_user):
 
     frm_ligne_budget = tk.Frame(frm_budgets)
     frm_ligne_budget.pack(fill=tk.X, pady=5)
+    
     tk.Label(frm_ligne_budget, text="Catégorie :", font=("Arial", 12)).pack(side=tk.LEFT, padx=5)
     cbb_cat = Combobox(frm_ligne_budget, values=categories, state="readonly", font=("Arial", 12), width=15)
     cbb_cat.pack(side=tk.LEFT, padx=5)
 
-    tk.Label(frm_ligne_budget, text="Budget initial (€) :", font=("Arial", 12)).pack(side=tk.LEFT, padx=5)
-    ent_budget_val = tk.Entry(frm_ligne_budget, font=("Arial", 12), width=10)
-    ent_budget_val.pack(side=tk.LEFT, padx=5)
+    tk.Label(frm_ligne_budget, text="modifier budget (€) :", font=("Arial", 12)).pack(side=tk.LEFT, padx=5)
+    ent_budget_modif = tk.Entry(frm_ligne_budget, font=("Arial", 12), width=10)
+    ent_budget_modif.pack(side=tk.LEFT, padx=5)
+    
+    lbl_init = tk.Label(frm_ligne_budget, text="Budget Initial : -- €", font=("Arial", 12, "bold"))
+    lbl_init.pack(side=tk.LEFT, padx=20)
     
     lbl_dispo = tk.Label(frm_ligne_budget, text="Dispo: -- €", font=("Arial", 12, "bold"))
     lbl_dispo.pack(side=tk.LEFT, padx=20)
 
-    def actualiser_stats_categorie(*args):
+    def actualiser_stats_categorie(*args): #*args
         cat = cbb_cat.get().strip().lower()
         compte_sel = cbb_compte.get().lower().replace(" ", "_")
         if not cat or not compte_sel: return
@@ -65,8 +68,8 @@ def ouvrir_gestion_budget(fenetre_parente, id_compte, cle, dir_user):
         if id_compte in base_de_donnees and compte_sel in base_de_donnees[id_compte]:
             for op in base_de_donnees[id_compte][compte_sel]:
                 try:
-                    if str(op[5]).strip().lower() == cat and float(op[3]) < 0:
-                        depenses_totales += abs(float(op[3]))
+                    if str(op[5]).strip().lower() == cat:
+                        depenses_totales += float(op[3])
                 except: pass
                     
         budget_limite = 0.0
@@ -76,18 +79,20 @@ def ouvrir_gestion_budget(fenetre_parente, id_compte, cle, dir_user):
                     budget_limite = float(b[1])
                     break
         
-        dispo = budget_limite - depenses_totales
+        dispo = budget_limite + depenses_totales
         
-        ent_budget_val.delete(0, tk.END)
-        ent_budget_val.insert(0, f"{budget_limite:.2f}")
-        lbl_dispo.config(text=f"Dispo: {dispo:.2f} €", fg="green" if dispo >= 0 else "red")
+        ent_budget_modif.delete(0, tk.END)
+        ent_budget_modif.insert(0, f"{budget_limite:.2f}")
+        
+        lbl_dispo.config(text=f"Dispo: {dispo:.2f} €", fg="green" if dispo > 0 else "red")
+        lbl_init.config(text=f"Initial: {budget_limite:.2f} €", fg="green" if dispo >= 0 else "red")
 
     def valider_budget():
         cat = cbb_cat.get().strip().lower()
         compte_sel = cbb_compte.get().lower().replace(" ", "_")
         if not cat or not compte_sel: return
         try:
-            nouveau_budget_limite = float(ent_budget_val.get())
+            nouveau_budget_limite = float(ent_budget_modif.get())
             if id_compte not in base_de_budgets: base_de_budgets[id_compte] = {}
             if compte_sel not in base_de_budgets[id_compte]: base_de_budgets[id_compte][compte_sel] = []
             
@@ -101,7 +106,7 @@ def ouvrir_gestion_budget(fenetre_parente, id_compte, cle, dir_user):
                 base_de_budgets[id_compte][compte_sel].append([cat, nouveau_budget_limite])
             
             gestion_compte.sauvegarder_utilisateur(id_compte, base_de_donnees, base_de_budgets, cle)
-            messagebox.showinfo("Succès", "Budget mis à jour !")
+            messagebox.showinfo("Succès", "Budget mis à jour")
             actualiser_stats_categorie()
         except ValueError:
             messagebox.showerror("Erreur", "Entrez un nombre valide.")
@@ -115,12 +120,12 @@ def ouvrir_gestion_budget(fenetre_parente, id_compte, cle, dir_user):
     ent_new_cat.pack(side=tk.LEFT, padx=5)
 
     def ajouter_cat():
-        n = ent_new_cat.get().strip().lower()
-        if n and n not in categories:
-            categories.append(n)
+        new_cat = ent_new_cat.get().strip().lower()
+        if new_cat and new_cat not in categories:
+            categories.append(new_cat)
             categories.sort()
             cbb_cat['values'] = categories
-            cbb_cat.set(n)
+            cbb_cat.set(new_cat)
             ent_new_cat.delete(0, tk.END)
             actualiser_stats_categorie()
 
@@ -155,7 +160,6 @@ def ouvrir_gestion_budget(fenetre_parente, id_compte, cle, dir_user):
                     trans.append((op[0], op[1], str(op[5]).strip().title(), float(op[3])))
                 except: pass
 
-        # NOUVEAU : Application du tri selon le critère choisi
         critere = cbb_tri.get()
         if critere == "Date":
             def safe_date_sort(x):
@@ -169,9 +173,9 @@ def ouvrir_gestion_budget(fenetre_parente, id_compte, cle, dir_user):
         elif critere == "Catégorie":
             trans.sort(key=lambda x: x[2].lower())
         elif critere == "Montant":
-            trans.sort(key=lambda x: x[3])
+            trans.sort(key=lambda x: x[3], reverse=True)
 
-        # Affichage propre des dates dans le tableau
+        # Affiche proprement date tableau
         def formater_date(date_str):
             try: return datetime.strptime(date_str, "%Y/%m/%d").strftime("%d/%m/%Y")
             except: return date_str

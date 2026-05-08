@@ -16,10 +16,11 @@ def action_virement(
     date,
     fenetre,
     refresh,
+    compte_selectionne
 ):
     """correspondance etre le virement graphique UI et CORE"""
 
-    compte_dep = dep.get().lower().replace(" ", "_")
+    compte_dep = compte_selectionne
     compte_dest = dest.get().lower().replace(" ", "_")
     somme = float(montant.get())
 
@@ -105,9 +106,11 @@ def action_ajouter_compte(
 
 
 def virement(
-    fenetre_gestion_compte, base_de_donnees, base_de_budgets, id_compte, cle, refresh
+    fenetre_gestion_compte, base_de_donnees, base_de_budgets, id_compte, cle, refresh, compte_selectionne
 ):
     """interface graphique pour les virements inter-compte"""
+    
+    compte_selectionne_after = compte_selectionne.get().lower().replace(" ", "_")
     fen_virement = tk.Toplevel(fenetre_gestion_compte)
     fenetre_gestion_compte.withdraw()  # permet de faire disparaitre la fenetre mere mais jcp comment la faire reapparaitre apres ...
     fen_virement.title("Virement")
@@ -132,11 +135,9 @@ def virement(
     frm_depart = tk.Frame(frm_virement)
     frm_depart.pack(expand=True, anchor=tk.CENTER, padx=(40, 0), pady=(0, 20))
 
-    lbl_compte_dep = tk.Label(frm_depart, text="Compte de départ :", font=("", 16))
+    lbl_compte_dep = tk.Label(frm_depart, text=f"Compte de départ : {compte_selectionne.get().lower().replace("_", " ")}", font=("", 16))
     lbl_compte_dep.pack(side=tk.LEFT, padx=(16, 0), expand=True)
 
-    cbb_dep = Combobox(frm_depart, values=liste_compte, state="readonly")
-    cbb_dep.pack(expand=True)
 
     # Compte destinataire
     frm_dest = tk.Frame(frm_virement)
@@ -167,7 +168,7 @@ def virement(
             base_de_budgets,
             id_compte,
             cle,
-            cbb_dep,
+            compte_selectionne_after,
             cbb_dest,
             montant,
             date.today(),
@@ -176,7 +177,7 @@ def virement(
         ),
     ).pack(expand=True, pady=(75, 0))
 
-    tk.Button(fen_virement, text="Annuler", command=fen_virement.destroy).pack(
+    tk.Button(fen_virement, text="Annuler", command=refresh).pack(
         expand=True, pady=(0, 2)
     )
 
@@ -190,10 +191,9 @@ def addop(
     compte_selectionne,
     refresh,
 ):
-    """interface graphique pour les diverses operations"""
-
+    compte_selectionne_after = compte_selectionne.get().lower().replace(" ", "_")
     fen_addop = tk.Toplevel(fenetre_gestion_compte)
-    fenetre_gestion_compte.withdraw()  # permet de faire disparaitre la fenetre mere mais jcp comment la faire reapparaitre apres ...
+    fenetre_gestion_compte.withdraw()
     fen_addop.title("Ajouter une opération")
     fen_addop.geometry("1000x1000")
 
@@ -203,8 +203,12 @@ def addop(
 
     frm_op = tk.Frame(fen_addop)
     frm_op.pack(pady=50)
-
-    # DATE
+    
+    frm_compteselect = tk.Frame(frm_op)
+    frm_compteselect.pack(anchor=tk.W, pady=20)
+    tk.Label(
+        frm_compteselect, text=f"Compte selectionner : {compte_selectionne.get().lower().replace('_', ' ')}", font=("Arial", 20, "bold")
+    ).pack(side=tk.LEFT)
 
     frm_date = tk.Frame(frm_op)
     frm_date.pack(anchor=tk.W, pady=20)
@@ -221,7 +225,6 @@ def addop(
     )
     date.pack(side=tk.LEFT)
 
-    # LIBELLE
     frm_libelle = tk.Frame(frm_op)
     frm_libelle.pack(anchor=tk.W, pady=20)
     tk.Label(
@@ -230,7 +233,6 @@ def addop(
     libelle = tk.Entry(frm_libelle, font=("Arial", 20, "bold"), width=10)
     libelle.pack(side=tk.LEFT)
 
-    # MONTANT
     frm_montant = tk.Frame(frm_op)
     frm_montant.pack(anchor=tk.W, pady=20)
     tk.Label(
@@ -239,26 +241,34 @@ def addop(
     verif_int = (
         fen_addop.register(gestion_compte.validation_montant),
         "%P",
-    )  # Proposed donc le texte total dans le frame budget (verifie tout en gros)
+    )
     montant = tk.Entry(
         frm_montant,
         font=("Arial", 20, "bold"),
         width=10,
-        validate="key",  # quand je tape au clavier
+        validate="key",
         validatecommand=verif_int,
     )
     montant.pack(side=tk.LEFT)
 
-    # BUDGET
     frm_bud = tk.Frame(frm_op)
     frm_bud.pack(anchor=tk.W, pady=20)
     tk.Label(
         frm_bud, text="Budget :", font=("Arial", 20, "bold"), width=10, anchor=tk.W
     ).pack(side=tk.LEFT)
-    choixbud = ["sorties", "divers", "alimentation"]
+
+    choixbud_set = {"sorties", "divers", "alimentation"}
+    if id_compte in base_de_budgets and compte_selectionne_after in base_de_budgets[id_compte]:
+        for b_item in base_de_budgets[id_compte][compte_selectionne_after]:
+            choixbud_set.add(b_item[0].strip().lower())
+    
+    choixbud = sorted(list(choixbud_set))
+
     cbb_choixbud = Combobox(
         frm_bud, values=choixbud, state="readonly", font=("Arial", 15, "bold"), width=30
     )
+    if choixbud:
+        cbb_choixbud.set(choixbud[0])
     cbb_choixbud.pack(expand=True)
 
     frm_button = tk.Frame(fen_addop)
@@ -273,7 +283,7 @@ def addop(
             base_de_budgets,
             id_compte,
             cle,
-            compte_selectionne,
+            compte_selectionne_after,
             date,
             libelle,
             montant,
@@ -283,9 +293,16 @@ def addop(
         ),
     ).pack(pady=(50, 70))
 
+    def annuler():
+        fen_addop.destroy()
+        fenetre_gestion_compte.deiconify()
+        refresh()
+
     tk.Button(
-        fen_addop, text="Annuler", font=("Arial", 12, "bold"), command=fen_addop.destroy
+        fen_addop, text="Annuler", font=("Arial", 12, "bold"), command=annuler
     ).pack(padx=10, pady=(50, 20))
+
+    fen_addop.protocol("WM_DELETE_WINDOW", annuler)
 
 
 def addcompte(
@@ -330,7 +347,7 @@ def addcompte(
     frm_button = tk.Frame(fen_addcompte)
     frm_button.pack(pady=20)
 
-    tk.Button(frm_button, text="Annuler", command=fen_addcompte.destroy).pack(
+    tk.Button(frm_button, text="Annuler", command=refresh).pack(
         side=tk.LEFT, padx=10
     )
 
@@ -466,7 +483,7 @@ def main_gestion_compte(
             base_de_budgets,
             id_compte,
             cle,
-            cbb_compte_principal.get().lower().replace(" ", "_"),
+            cbb_compte_principal,
             refresh,
         ),
     ).grid(row=0, column=0, padx=20)
@@ -484,6 +501,7 @@ def main_gestion_compte(
             id_compte,
             cle,
             refresh,
+            cbb_compte_principal,
         ),
     ).grid(row=0, column=1, padx=20)
 

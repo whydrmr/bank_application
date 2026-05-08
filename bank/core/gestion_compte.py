@@ -64,17 +64,12 @@ def charger_donnees(dossier_utilisateurs, cle):
 
     return base_de_donnees, base_de_budgets
 
-
-import os
-# (Garde tes autres imports en haut du fichier, notamment encrypt)
-
 def sauvegarder_utilisateur(id_compte, base_de_donnees, base_de_budgets, cle):
     """
     Sauvegarde les changements dans un fichier temporaire d'abord.
     Si tout se passe bien, il remplace le vrai fichier, évitant ainsi toute perte 
     de données en cas de crash pendant l'écriture.
     """
-    # 1. Définition des chemins dynamiques et sécurisés
     dossier_users = os.path.join(os.path.dirname(__file__), "users")
     os.makedirs(dossier_users, exist_ok=True) 
     
@@ -82,7 +77,6 @@ def sauvegarder_utilisateur(id_compte, base_de_donnees, base_de_budgets, cle):
     fichier_temp = os.path.join(dossier_users, f"{id_compte}_temp.txt") # Le fameux fichier temporaire
     
     try:
-        # 2. On écrit TOUT dans le fichier temporaire en premier
         with open(fichier_temp, "w", encoding="utf-8") as f:
             
             # Sauvegarde des budgets
@@ -106,14 +100,10 @@ def sauvegarder_utilisateur(id_compte, base_de_donnees, base_de_budgets, cle):
                         ligne_ope = f"OPE*{date_op}*{libelle}*{nom_compte}*{type_op}*{montant}*{statut}*{budget}"
                         f.write(encrypt(ligne_ope, cle) + "\n")
                         
-        # 3. LE COUP DE MAGIE : Si on arrive à cette ligne sans crash, 
-        # on écrase l'ancien fichier avec le nouveau. C'est instantané et sans risque !
         os.replace(fichier_temp, fichier_final)
         
     except Exception as e:
         print(f"Erreur critique lors de la sauvegarde : {e}")
-        # En cas de crash pendant l'écriture, on efface juste le brouillon (le temp)
-        # L'ancien fichier reste intact !
         if os.path.exists(fichier_temp):
             os.remove(fichier_temp)
 

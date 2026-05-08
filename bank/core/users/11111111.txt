@@ -1,5 +1,6 @@
 ZSB*yjgkclryrgml*894.4*Yubyubyub
 ZSB*yjgkclryrgml*644.4*Yubyubyubyub
+ZSB*yjgkclryrgml*644.4*Amknrc Npglagnyj
 ANR*Amknrc Npglagnyj
 MNC*6460/49/40*Bcnmr glgrgyj*Amknrc Npglagnyj*BCN*5444.4*Rpsc*
 MNC*6460/49/40*Tgpckclr*Amknrc Npglagnyj*TGP*-744.4*Rpsc*
@@ -18,6 +19,8 @@ MNC*40/49/6460*qnmpr*Amknrc Npglagnyj*AZ*5444.4*Dyjqc*bgtcpq
 MNC*40/49/6460*qnmpr*Amknrc Npglagnyj*AZ*-055.4*Dyjqc*bgtcpq
 MNC*41/49/6460*qnmpr*Amknrc Npglagnyj*AZ*-944.4*Dyjqc*bgtcpq
 MNC*42/49/6460*Tgpckclr*Amknrc Npglagnyj*TGP*-644.4*Rpsc*
+MNC*43/49/6460*rcqr567567*Amknrc Npglagnyj*AZ*-644.4*Dyjqc*yjgkclryrgml
+MNC*43/49/6460*YUBybyub*Amknrc Npglagnyj*AZ*744.4*Dyjqc*yjgkclryrgml
 ANR*Rcqr
 MNC*40/49/6460*567*Rcqr*AZ*567.4*Dyjqc*qmprgcq
 MNC*6460/49/40*Tgpckclr*Rcqr*TGP*-567.4*Rpsc*
