@@ -353,7 +353,7 @@ def addcompte(
 
 
 def main_gestion_compte(
-    fenetre_principale, id_compte, cle, compte, blase, dir_user="bank/core/users"
+    fenetre_principale, id_compte, cle, compte, blase, dir_user
 ):
     """interface graphique qui regroupe tout"""
 

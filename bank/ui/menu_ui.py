@@ -1,4 +1,5 @@
 import tkinter as tk
+import os
 from . import gestion_compte_ui
 from . import gestion_budget_ui
 
@@ -9,6 +10,8 @@ def ouvrir_menu(fenetre_parente, id_compte, cle, blase, dir_user="bank/core/user
     fenetrexstrxstrxstrxdirectory -> None
 
     """
+    dir_user = os.path.join(os.path.dirname(__file__), '..', 'core', 'users')
+
     fenetre_menu = tk.Toplevel(fenetre_parente)
     fenetre_menu.title("Menu Principal")
     fenetre_menu.geometry("1000x1000")
@@ -29,7 +32,7 @@ def ouvrir_menu(fenetre_parente, id_compte, cle, blase, dir_user="bank/core/user
         width=25,
         height=2,
         command=lambda: gestion_compte_ui.main_gestion_compte(
-            fenetre_menu, id_compte, cle, dir_user, blase
+            fenetre_principale = fenetre_menu, id_compte = id_compte, cle = cle, compte = None, blase = blase, dir_user = os.path.join(os.path.dirname(__file__), '..', 'core', 'users')
         ),
     ).grid(row=0, column=0, padx=40, sticky="w")
 
@@ -39,7 +42,7 @@ def ouvrir_menu(fenetre_parente, id_compte, cle, blase, dir_user="bank/core/user
         font=("Arial", 16, "bold"),
         width=25,
         height=2,
-        command=lambda: gestion_budget_ui.ouvrir_gestion_budget(fenetre_menu),
+        command=lambda: gestion_budget_ui.ouvrir_gestion_budget(fenetre_parente = fenetre_menu, id_compte = id_compte, cle = cle, dir_user = dir_user),
     ).grid(row=0, column=1, padx=40, sticky="e")
 
     tk.Button(

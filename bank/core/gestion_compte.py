@@ -65,33 +65,57 @@ def charger_donnees(dossier_utilisateurs, cle):
     return base_de_donnees, base_de_budgets
 
 
+import os
+# (Garde tes autres imports en haut du fichier, notamment encrypt)
+
 def sauvegarder_utilisateur(id_compte, base_de_donnees, base_de_budgets, cle):
     """
-    _____________________________________________________________________
-
-    Sauvegarde les changements dans le fichier texte avec l'id du compte.
-
-    strxdict-->None
-    _____________________________________________________________________
-
+    Sauvegarde les changements dans un fichier temporaire d'abord.
+    Si tout se passe bien, il remplace le vrai fichier, évitant ainsi toute perte 
+    de données en cas de crash pendant l'écriture.
     """
-    fichier = f"bank/core/users/{id_compte}.txt"
-    with open(fichier, "w", encoding="utf-8") as f:
-        for compte, budgets in base_de_budgets[id_compte].items():
-            nom_compte = compte.replace("_", " ").title()
-            for budget in budgets:
-                libelle_budget, montant_max = budget
-                ligne = f"BUD*{libelle_budget}*{montant_max}*{nom_compte}"
-                f.write(encrypt(ligne, cle) + "\n")
+    # 1. Définition des chemins dynamiques et sécurisés
+    dossier_users = os.path.join(os.path.dirname(__file__), "users")
+    os.makedirs(dossier_users, exist_ok=True) 
+    
+    fichier_final = os.path.join(dossier_users, f"{id_compte}.txt")
+    fichier_temp = os.path.join(dossier_users, f"{id_compte}_temp.txt") # Le fameux fichier temporaire
+    
+    try:
+        # 2. On écrit TOUT dans le fichier temporaire en premier
+        with open(fichier_temp, "w", encoding="utf-8") as f:
+            
+            # Sauvegarde des budgets
+            if id_compte in base_de_budgets:
+                for compte, budgets in base_de_budgets[id_compte].items():
+                    nom_compte = compte.replace("_", " ").title()
+                    for budget in budgets:
+                        libelle_budget, montant_max = budget
+                        ligne = f"BUD*{libelle_budget}*{montant_max}*{nom_compte}"
+                        f.write(encrypt(ligne, cle) + "\n")
 
-        for compte, operations in base_de_donnees[id_compte].items():
-            nom_compte = compte.replace("_", " ").title()
-            ligne_cpt = f"CPT*{nom_compte}"
-            f.write(encrypt(ligne_cpt, cle) + "\n")
-            for op in operations:
-                date_op, libelle, type_op, montant, statut, budget = op
-                ligne_ope = f"OPE*{date_op}*{libelle}*{nom_compte}*{type_op}*{montant}*{statut}*{budget}"
-                f.write(encrypt(ligne_ope, cle) + "\n")
+            # Sauvegarde des comptes et opérations
+            if id_compte in base_de_donnees:
+                for compte, operations in base_de_donnees[id_compte].items():
+                    nom_compte = compte.replace("_", " ").title()
+                    ligne_cpt = f"CPT*{nom_compte}"
+                    f.write(encrypt(ligne_cpt, cle) + "\n")
+                    
+                    for op in operations:
+                        date_op, libelle, type_op, montant, statut, budget = op
+                        ligne_ope = f"OPE*{date_op}*{libelle}*{nom_compte}*{type_op}*{montant}*{statut}*{budget}"
+                        f.write(encrypt(ligne_ope, cle) + "\n")
+                        
+        # 3. LE COUP DE MAGIE : Si on arrive à cette ligne sans crash, 
+        # on écrase l'ancien fichier avec le nouveau. C'est instantané et sans risque !
+        os.replace(fichier_temp, fichier_final)
+        
+    except Exception as e:
+        print(f"Erreur critique lors de la sauvegarde : {e}")
+        # En cas de crash pendant l'écriture, on efface juste le brouillon (le temp)
+        # L'ancien fichier reste intact !
+        if os.path.exists(fichier_temp):
+            os.remove(fichier_temp)
 
 
 def ajouter_compte(base_de_donnees, base_de_budgets, id_compte, nom_compte):
@@ -113,10 +137,6 @@ def operation(base_de_donnees, base_de_budgets, id_compte, compte, data):
         ]
     )
 
-    for b in base_de_budgets[id_compte][compte]:
-        if b[0] == data["budget"]:
-            b[1] -= data["montant"]
-            break
 
     return base_de_donnees, base_de_budgets
 

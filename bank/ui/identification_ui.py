@@ -78,11 +78,11 @@ def identification_mainloop():
     frm_inputs = tk.Frame(identification_fenetre, bg="white")
     frm_inputs.pack(pady=14)
 
-    tk.Label(frm_inputs, text="ID", font=("Arial", 18), bg="white").grid(row=0, column=0, padx=10)
+    tk.Label(frm_inputs, text="ID", font=("Arial", 18), bg="gray").grid(row=0, column=0, padx=10)
     entry_id = tk.Entry(frm_inputs, font=("Arial", 18), bd=2, relief="solid")
     entry_id.grid(row=0, column=1, pady=10)
     
-    tk.Label(frm_inputs, text="MDP", font=("Arial", 18), bg="white").grid(row=1, column=0, padx=10)
+    tk.Label(frm_inputs, text="MDP", font=("Arial", 18), bg="gray").grid(row=1, column=0, padx=10)
     entry_mdp_var = tk.StringVar()
     entry_mdp = tk.Entry(frm_inputs, textvariable=entry_mdp_var, font=("Arial", 18), show="*", bd=2, relief="solid")
     entry_mdp.grid(row=1, column=1, pady=10)
@@ -115,6 +115,7 @@ def identification_mainloop():
                 width=10,
                 height=5,
                 bg="green",
+                highlightbackground = "green",
                 command=se_connecter
             ).grid(row=4, column=0)
 
@@ -131,6 +132,7 @@ def identification_mainloop():
                 width=10,
                 height=5,
                 bg="red",
+                highlightbackground = "red",
                 command=enlever_chiffre 
             ).grid(row=4, column=2)
 
