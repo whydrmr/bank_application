@@ -10,17 +10,15 @@ def action_virement(
     base_de_budgets,
     id_compte,
     cle,
-    dep,
-    dest,
+    compte_dep,  
+    dest,        
     montant,
     date,
     fenetre,
-    refresh,
-    compte_selectionne
+    refresh
 ):
     """correspondance etre le virement graphique UI et CORE"""
 
-    compte_dep = compte_selectionne
     compte_dest = dest.get().lower().replace(" ", "_")
     somme = float(montant.get())
 
@@ -173,14 +171,24 @@ def virement(
             montant,
             date.today(),
             fen_virement,
-            refresh,
+            refresh, 
         ),
     ).pack(expand=True, pady=(75, 0))
 
-    tk.Button(fen_virement, text="Annuler", command=refresh).pack(
-        expand=True, pady=(0, 2)
-    )
+    def annuler_virement():
+        fen_virement.destroy()
+        fenetre_gestion_compte.deiconify() 
+        refresh()
 
+    tk.Button(
+        frm_virement, 
+        text="Annuler",
+        bg="white",
+        fg="black",
+        command=annuler_virement
+    ).pack(expand = True, pady=(10, 20))
+
+    fen_virement.protocol("WM_DELETE_WINDOW", annuler_virement)
 
 def addop(
     fenetre_gestion_compte,
@@ -198,7 +206,7 @@ def addop(
     fen_addop.geometry("1000x1000")
 
     tk.Label(fen_addop, text="Ajouter une opération", font=("Arial", 30, "bold")).pack(
-        pady=80
+        pady=60
     )
 
     frm_op = tk.Frame(fen_addop)
@@ -291,7 +299,7 @@ def addop(
             fen_addop,
             refresh,
         ),
-    ).pack(pady=(50, 70))
+    ).pack(pady=(1, 1))
 
     def annuler():
         fen_addop.destroy()
@@ -300,7 +308,7 @@ def addop(
 
     tk.Button(
         fen_addop, text="Annuler", font=("Arial", 12, "bold"), command=annuler
-    ).pack(padx=10, pady=(50, 20))
+    ).pack(padx=10, pady=(20, 20))
 
     fen_addop.protocol("WM_DELETE_WINDOW", annuler)
 
@@ -377,7 +385,7 @@ def main_gestion_compte(
     base_de_donnees, base_de_budgets = gestion_compte.charger_donnees(dir_user, cle)
     fenetre_gestion_compte = tk.Toplevel(fenetre_principale)
     fenetre_gestion_compte.title("Gestion de compte")
-    fenetre_gestion_compte.geometry("1000x1000")
+    fenetre_gestion_compte.geometry("1000x800")
 
     def refresh():
         fenetre_gestion_compte.destroy()
@@ -387,7 +395,7 @@ def main_gestion_compte(
         fenetre_gestion_compte,
         text=f"Gestion des comptes de l'utilisateur : {blase}",
         font=("Arial", 30, "bold"),
-    ).pack(pady=(60, 50))
+    ).pack(pady=(20, 20))
 
     frm_select_compte = tk.Frame(fenetre_gestion_compte)
     frm_select_compte.pack(anchor="e", padx=150, pady=10)
