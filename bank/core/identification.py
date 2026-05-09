@@ -77,6 +77,7 @@ def verification_mdp_utilisateur(id_saisi, mdp_saisi, base_donnee):
                 return True, cle_user, nom_decrypt
     return False, None, nom_decrypt
 
+
 def main_identification():
     base_donnee = extraction("compte_crypte.txt")
     nb_essaie = 0

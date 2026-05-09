@@ -12,12 +12,26 @@ NB_ESSAIS = 0
 
 
 def identification_mainloop():
+    """
+
+    None --> fenetrexstrxstrxstr
+
+    La fonction identification_mainloop() gere l'interface graphique complete de la partie de l'identification.
+
+    """
     # variable local mais pas local
     identifiant_valide = None
     cle_user_valide = None
     nom_decrypt_valide = None
 
     def se_connecter():
+        """
+
+        None --> None
+
+        La fonction se_connecter() permet de se connecter a un compte.
+
+        """
         global NB_ESSAIS
         nonlocal identifiant_valide, cle_user_valide, nom_decrypt_valide
         identifiant = entry_id.get()  # c'est  le compte de Nima '23456789'
@@ -59,14 +73,35 @@ def identification_mainloop():
             identification_fenetre.quit()
 
     def ajouter_chiffre(chiffre):
+        """
+
+        int --> None
+
+        La fonction ajouter_chiffre() permet de rajouter un chiffre a la fin de chiffre donnee.
+
+        """
         nouveau_mdp = entry_mdp_var.get() + str(chiffre)
         entry_mdp_var.set(nouveau_mdp)
 
     def enlever_chiffre():
+        """
+
+        None --> None
+
+        La fonction enlever_chiffre() permet d'enlever un chiffre a la fin.
+
+        """
         nouveau_mdp = entry_mdp_var.get()[:-1]
         entry_mdp_var.set(nouveau_mdp)
 
     def montrer_mdp():
+        """
+
+        None --> None
+
+        La fonction montrer_mdp() permet de afficher l'entree sur une entree donnee.
+
+        """
         if entry_mdp.cget("show") == "*":
             entry_mdp.config(show="")
         else:

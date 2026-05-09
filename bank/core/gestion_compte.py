@@ -6,6 +6,9 @@ from .crypt import encrypt, decrypt
 def charger_donnees(dossier_utilisateurs, cle):
     """
     Charge toutes les données depuis des fichiers cryptés.
+
+    strxstr -->dictxdict
+
     """
     cle = int(cle)
     base_de_donnees = {}
@@ -64,21 +67,26 @@ def charger_donnees(dossier_utilisateurs, cle):
 
     return base_de_donnees, base_de_budgets
 
+
 def sauvegarder_utilisateur(id_compte, base_de_donnees, base_de_budgets, cle):
     """
     Sauvegarde les changements dans un fichier temporaire d'abord.
-    Si tout se passe bien, il remplace le vrai fichier, évitant ainsi toute perte 
+    Si tout se passe bien, il remplace le vrai fichier, évitant ainsi toute perte
     de données en cas de crash pendant l'écriture.
+
+    strxdictxdictxstr --> None
+
     """
     dossier_users = os.path.join(os.path.dirname(__file__), "users")
-    os.makedirs(dossier_users, exist_ok=True) 
-    
+    os.makedirs(dossier_users, exist_ok=True)
+
     fichier_final = os.path.join(dossier_users, f"{id_compte}.txt")
-    fichier_temp = os.path.join(dossier_users, f"{id_compte}_temp.txt") # Le fameux fichier temporaire
-    
+    fichier_temp = os.path.join(
+        dossier_users, f"{id_compte}_temp.txt"
+    )  # Le fameux fichier temporaire
+
     try:
         with open(fichier_temp, "w", encoding="utf-8") as f:
-            
             # Sauvegarde des budgets
             if id_compte in base_de_budgets:
                 for compte, budgets in base_de_budgets[id_compte].items():
@@ -94,14 +102,14 @@ def sauvegarder_utilisateur(id_compte, base_de_donnees, base_de_budgets, cle):
                     nom_compte = compte.replace("_", " ").title()
                     ligne_cpt = f"CPT*{nom_compte}"
                     f.write(encrypt(ligne_cpt, cle) + "\n")
-                    
+
                     for op in operations:
                         date_op, libelle, type_op, montant, statut, budget = op
                         ligne_ope = f"OPE*{date_op}*{libelle}*{nom_compte}*{type_op}*{montant}*{statut}*{budget}"
                         f.write(encrypt(ligne_ope, cle) + "\n")
-                        
+
         os.replace(fichier_temp, fichier_final)
-        
+
     except Exception as e:
         print(f"Erreur critique lors de la sauvegarde : {e}")
         if os.path.exists(fichier_temp):
@@ -109,6 +117,12 @@ def sauvegarder_utilisateur(id_compte, base_de_donnees, base_de_budgets, cle):
 
 
 def ajouter_compte(base_de_donnees, base_de_budgets, id_compte, nom_compte):
+    """
+    La fonction ajouter_compte() gere la logique de l'ajout du compte dans la base de données.
+
+    dictxdictxstrxstr --> dictxdict
+
+    """
     cle = nom_compte.lower().replace(" ", "_")
     base_de_donnees[id_compte][cle] = []
     base_de_budgets[id_compte][cle] = []
@@ -116,6 +130,12 @@ def ajouter_compte(base_de_donnees, base_de_budgets, id_compte, nom_compte):
 
 
 def operation(base_de_donnees, base_de_budgets, id_compte, compte, data):
+    """
+    La fonction operation() gere la logique de l'ajout d'operation avec les arguments donnees dans la base de donnees.
+
+    dictxdictxstrxstrxlist --> dictxdict
+
+    """
     base_de_donnees[id_compte][compte].append(
         [
             data["date"],
@@ -127,11 +147,16 @@ def operation(base_de_donnees, base_de_budgets, id_compte, compte, data):
         ]
     )
 
-
     return base_de_donnees, base_de_budgets
 
 
 def virement(base_de_donnees, id_compte, compte_1, compte_2, somme, date_op):
+    """
+    La fonction virement() gere la logique de l'ajout d'un virement dans la basee de donnees.
+
+    dictxstrxstrxstrxfloatxstr --> dict
+
+    """
     verification = date_op <= date.today()
     date_str = date_op.strftime("%Y/%m/%d")
 
@@ -145,8 +170,9 @@ def virement(base_de_donnees, id_compte, compte_1, compte_2, somme, date_op):
 
 
 def validation_montant(montant):
-    """input -> bool
-    verifie la typo de chaque input pour le mdp et l'id
+    """
+    input -> bool
+    La fonction validation_montant() verifie le type de l'argument.
     """
     valeur = montant.replace(",", ".")
 
@@ -160,5 +186,11 @@ def validation_montant(montant):
 
 
 def main_gestion_compte(id_compte, cle):
+    """
+    La fonction main_gestion_compte() charge les donnees de tout les comptes et sauvegarder tout les operations pour l'utilisateur.
+
+    strxstr --> None
+
+    """
     base_de_donnees, base_de_budgets = charger_donnees("bank/core/users", cle)
     sauvegarder_utilisateur(id_compte, base_de_donnees, base_de_budgets, cle)

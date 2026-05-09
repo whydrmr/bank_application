@@ -4,9 +4,16 @@ from tkinter.ttk import Combobox, Treeview, Scrollbar
 from datetime import datetime
 from ..core import gestion_compte
 
-def ouvrir_gestion_budget(fenetre_parente, id_compte, cle, dir_user): 
+
+def ouvrir_gestion_budget(fenetre_parente, id_compte, cle, dir_user):
+    """
+    tk.Tk/tk.Toplevel, str, int, str --> None
+
+    Initialise et affiche l'interface graphique pour gérer les budgets et visualiser les opérations
+
+    """
     base_de_donnees, base_de_budgets = gestion_compte.charger_donnees(dir_user, cle)
-    
+
     fenetre_gestion_budget = tk.Toplevel(fenetre_parente)
     fenetre_gestion_budget.title("Gestion de Budget")
     fenetre_gestion_budget.geometry("1000x850")
@@ -20,82 +27,153 @@ def ouvrir_gestion_budget(fenetre_parente, id_compte, cle, dir_user):
 
     frm_entete = tk.Frame(fenetre_gestion_budget)
     frm_entete.pack(fill=tk.X, pady=15)
-    tk.Label(frm_entete, text="Gestion de Budget", font=("Arial", 25, "bold")).pack(side=tk.LEFT, padx=50)
-    tk.Button(frm_entete, text="Fermer", font=("Arial", 12, "bold"), bg="white", fg="black", command=fenetre_gestion_budget.destroy).pack(side=tk.RIGHT, padx=50)
+    tk.Label(frm_entete, text="Gestion de Budget", font=("Arial", 25, "bold")).pack(
+        side=tk.LEFT, padx=50
+    )
+    tk.Button(
+        frm_entete,
+        text="Fermer",
+        font=("Arial", 12, "bold"),
+        bg="white",
+        fg="black",
+        command=fenetre_gestion_budget.destroy,
+    ).pack(side=tk.RIGHT, padx=50)
 
     frm_select = tk.Frame(fenetre_gestion_budget)
     frm_select.pack(pady=10)
-    tk.Label(frm_select, text="Compte :", font=("Arial", 16, "bold")).pack(side=tk.LEFT, padx=10)
-    
-    liste_compte_noms = [c.replace("_", " ").title() for c in base_de_donnees.get(str(id_compte), {}).keys()]
-    cbb_compte = Combobox(frm_select, values=liste_compte_noms, state="readonly", font=("Arial", 14), width=20)
+    tk.Label(frm_select, text="Compte :", font=("Arial", 16, "bold")).pack(
+        side=tk.LEFT, padx=10
+    )
+
+    liste_compte_noms = [
+        c.replace("_", " ").title()
+        for c in base_de_donnees.get(str(id_compte), {}).keys()
+    ]
+    cbb_compte = Combobox(
+        frm_select,
+        values=liste_compte_noms,
+        state="readonly",
+        font=("Arial", 14),
+        width=20,
+    )
     cbb_compte.pack(side=tk.LEFT)
 
-    tk.Button(frm_select, text="Rafraîchir les données", font=("Arial", 12, "bold"), bg="white", fg="black", 
-              command=lambda: actualiser_affichage()).pack(side=tk.LEFT, padx=20)
+    tk.Button(
+        frm_select,
+        text="Rafraîchir les données",
+        font=("Arial", 12, "bold"),
+        bg="white",
+        fg="black",
+        command=lambda: actualiser_affichage(),
+    ).pack(side=tk.LEFT, padx=20)
 
-    tk.Label(frm_select, text="Trier par :", font=("Arial", 12, "bold")).pack(side=tk.LEFT, padx=(10, 5))
-    cbb_tri = Combobox(frm_select, values=["Date", "Libellé", "Catégorie", "Montant"], state="readonly", font=("Arial", 12), width=12)
+    tk.Label(frm_select, text="Trier par :", font=("Arial", 12, "bold")).pack(
+        side=tk.LEFT, padx=(10, 5)
+    )
+    cbb_tri = Combobox(
+        frm_select,
+        values=["Date", "Libellé", "Catégorie", "Montant"],
+        state="readonly",
+        font=("Arial", 12),
+        width=12,
+    )
     cbb_tri.set("Date")
     cbb_tri.pack(side=tk.LEFT, padx=5)
 
-    frm_budgets = tk.LabelFrame(fenetre_gestion_budget, text="Définir / Suivre les Budgets", font=("Arial", 14, "bold"), padx=20, pady=10)
+    frm_budgets = tk.LabelFrame(
+        fenetre_gestion_budget,
+        text="Définir / Suivre les Budgets",
+        font=("Arial", 14, "bold"),
+        padx=20,
+        pady=10,
+    )
     frm_budgets.pack(fill=tk.X, padx=50, pady=15)
 
     frm_ligne_budget = tk.Frame(frm_budgets)
     frm_ligne_budget.pack(fill=tk.X, pady=5)
-    
-    tk.Label(frm_ligne_budget, text="Catégorie :", font=("Arial", 12)).pack(side=tk.LEFT, padx=5)
-    cbb_cat = Combobox(frm_ligne_budget, values=categories, state="readonly", font=("Arial", 12), width=15)
+
+    tk.Label(frm_ligne_budget, text="Catégorie :", font=("Arial", 12)).pack(
+        side=tk.LEFT, padx=5
+    )
+    cbb_cat = Combobox(
+        frm_ligne_budget,
+        values=categories,
+        state="readonly",
+        font=("Arial", 12),
+        width=15,
+    )
     cbb_cat.pack(side=tk.LEFT, padx=5)
 
-    tk.Label(frm_ligne_budget, text="modifier budget (€) :", font=("Arial", 12)).pack(side=tk.LEFT, padx=5)
+    tk.Label(frm_ligne_budget, text="modifier budget (€) :", font=("Arial", 12)).pack(
+        side=tk.LEFT, padx=5
+    )
     ent_budget_modif = tk.Entry(frm_ligne_budget, font=("Arial", 12), width=10)
     ent_budget_modif.pack(side=tk.LEFT, padx=5)
-    
-    lbl_init = tk.Label(frm_ligne_budget, text="Budget Initial : -- €", font=("Arial", 12, "bold"))
+
+    lbl_init = tk.Label(
+        frm_ligne_budget, text="Budget Initial : -- €", font=("Arial", 12, "bold")
+    )
     lbl_init.pack(side=tk.LEFT, padx=20)
-    
-    lbl_dispo = tk.Label(frm_ligne_budget, text="Dispo: -- €", font=("Arial", 12, "bold"))
+
+    lbl_dispo = tk.Label(
+        frm_ligne_budget, text="Dispo: -- €", font=("Arial", 12, "bold")
+    )
     lbl_dispo.pack(side=tk.LEFT, padx=20)
 
-    def actualiser_stats_categorie(*args): #*args
+    def actualiser_stats_categorie(*args):  # *args
+        """
+        tuple --> None
+        Calcule les dépenses totales de la catégorie et mettre à jour l'affichage du budget disponible
+        """
         cat = cbb_cat.get().strip().lower()
         compte_sel = cbb_compte.get().lower().replace(" ", "_")
-        if not cat or not compte_sel: return
-        
+        if not cat or not compte_sel:
+            return
+
         depenses_totales = 0.0
         if id_compte in base_de_donnees and compte_sel in base_de_donnees[id_compte]:
             for op in base_de_donnees[id_compte][compte_sel]:
                 try:
                     if str(op[5]).strip().lower() == cat:
                         depenses_totales += float(op[3])
-                except: pass
-                    
+                except:
+                    pass
+
         budget_limite = 0.0
         if id_compte in base_de_budgets and compte_sel in base_de_budgets[id_compte]:
             for b in base_de_budgets[id_compte][compte_sel]:
                 if b[0].strip().lower() == cat:
                     budget_limite = float(b[1])
                     break
-        
+
         dispo = budget_limite + depenses_totales
-        
+
         ent_budget_modif.delete(0, tk.END)
         ent_budget_modif.insert(0, f"{budget_limite:.2f}")
-        
-        lbl_dispo.config(text=f"Dispo: {dispo:.2f} €", fg="green" if dispo > 0 else "red")
-        lbl_init.config(text=f"Initial: {budget_limite:.2f} €", fg="green" if dispo >= 0 else "red")
+
+        lbl_dispo.config(
+            text=f"Dispo: {dispo:.2f} €", fg="green" if dispo > 0 else "red"
+        )
+        lbl_init.config(
+            text=f"Initial: {budget_limite:.2f} €", fg="green" if dispo >= 0 else "red"
+        )
 
     def valider_budget():
+        """
+        None --> None
+        Récupère le nouveau montant tapé, l'enregistre dans la base de données cryptée et rafraîchit l'affichage
+        """
         cat = cbb_cat.get().strip().lower()
         compte_sel = cbb_compte.get().lower().replace(" ", "_")
-        if not cat or not compte_sel: return
+        if not cat or not compte_sel:
+            return
         try:
             nouveau_budget_limite = float(ent_budget_modif.get())
-            if id_compte not in base_de_budgets: base_de_budgets[id_compte] = {}
-            if compte_sel not in base_de_budgets[id_compte]: base_de_budgets[id_compte][compte_sel] = []
-            
+            if id_compte not in base_de_budgets:
+                base_de_budgets[id_compte] = {}
+            if compte_sel not in base_de_budgets[id_compte]:
+                base_de_budgets[id_compte][compte_sel] = []
+
             trouve = False
             for b in base_de_budgets[id_compte][compte_sel]:
                 if b[0].strip().lower() == cat:
@@ -103,28 +181,44 @@ def ouvrir_gestion_budget(fenetre_parente, id_compte, cle, dir_user):
                     trouve = True
                     break
             if not trouve:
-                base_de_budgets[id_compte][compte_sel].append([cat, nouveau_budget_limite])
-            
-            gestion_compte.sauvegarder_utilisateur(id_compte, base_de_donnees, base_de_budgets, cle)
+                base_de_budgets[id_compte][compte_sel].append(
+                    [cat, nouveau_budget_limite]
+                )
+
+            gestion_compte.sauvegarder_utilisateur(
+                id_compte, base_de_donnees, base_de_budgets, cle
+            )
             messagebox.showinfo("Succès", "Budget mis à jour")
             actualiser_stats_categorie()
         except ValueError:
             messagebox.showerror("Erreur", "Entrez un nombre valide.")
 
-    tk.Button(frm_ligne_budget, text="Enregistrer", bg="white", fg="black", command=valider_budget).pack(side=tk.LEFT, padx=10)
+    tk.Button(
+        frm_ligne_budget,
+        text="Enregistrer",
+        bg="white",
+        fg="black",
+        command=valider_budget,
+    ).pack(side=tk.LEFT, padx=10)
 
     frm_ajout = tk.Frame(frm_budgets)
     frm_ajout.pack(fill=tk.X, pady=10)
-    tk.Label(frm_ajout, text="Nouvelle catégorie :", font=("Arial", 10)).pack(side=tk.LEFT)
+    tk.Label(frm_ajout, text="Nouvelle catégorie :", font=("Arial", 10)).pack(
+        side=tk.LEFT
+    )
     ent_new_cat = tk.Entry(frm_ajout, width=15)
     ent_new_cat.pack(side=tk.LEFT, padx=5)
 
     def ajouter_cat():
+        """
+        None --> None
+        Ajoute la catégorie saisie et la trie par ordre alphabétique
+        """
         new_cat = ent_new_cat.get().strip().lower()
         if new_cat and new_cat not in categories:
             categories.append(new_cat)
             categories.sort()
-            cbb_cat['values'] = categories
+            cbb_cat["values"] = categories
             cbb_cat.set(new_cat)
             ent_new_cat.delete(0, tk.END)
             actualiser_stats_categorie()
@@ -139,34 +233,52 @@ def ouvrir_gestion_budget(fenetre_parente, id_compte, cle, dir_user):
     for c in cols:
         tree.heading(c, text=c)
         tree.column(c, width=150, anchor="center")
-    
+
     scrollbar = Scrollbar(frm_tableau, orient=tk.VERTICAL, command=tree.yview)
     tree.configure(yscroll=scrollbar.set)
     tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
     scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
     def actualiser_affichage(*args):
+        """
+        tuple --> None
+        Tri le tableau d'après le critère choisi
+        """
         nonlocal base_de_donnees, base_de_budgets
         base_de_donnees, base_de_budgets = gestion_compte.charger_donnees(dir_user, cle)
         compte_sel = cbb_compte.get().lower().replace(" ", "_")
-        if not compte_sel: return
-            
-        for i in tree.get_children(): tree.delete(i)
-        
+        if not compte_sel:
+            return
+
+        for i in tree.get_children():
+            tree.delete(i)
+
         trans = []
         if id_compte in base_de_donnees and compte_sel in base_de_donnees[id_compte]:
             for op in base_de_donnees[id_compte][compte_sel]:
                 try:
-                    trans.append((op[0], op[1], str(op[5]).strip().title(), float(op[3])))
-                except: pass
+                    trans.append(
+                        (op[0], op[1], str(op[5]).strip().title(), float(op[3]))
+                    )
+                except:
+                    pass
 
         critere = cbb_tri.get()
         if critere == "Date":
+
             def safe_date_sort(x):
-                try: return datetime.strptime(x[0], "%Y/%m/%d")
-                except: 
-                    try: return datetime.strptime(x[0], "%d/%m/%Y")
-                    except: return datetime.min
+                """
+                tuple --> datetime
+                Convertit la date d'une transaction en objet datetime pour éviter les crashs lors du tri
+                """
+                try:
+                    return datetime.strptime(x[0], "%Y/%m/%d")
+                except:
+                    try:
+                        return datetime.strptime(x[0], "%d/%m/%Y")
+                    except:
+                        return datetime.min
+
             trans.sort(key=safe_date_sort, reverse=True)
         elif critere == "Libellé":
             trans.sort(key=lambda x: x[1].lower())
@@ -177,21 +289,30 @@ def ouvrir_gestion_budget(fenetre_parente, id_compte, cle, dir_user):
 
         # Affiche proprement date tableau
         def formater_date(date_str):
-            try: return datetime.strptime(date_str, "%Y/%m/%d").strftime("%d/%m/%Y")
-            except: return date_str
+            """
+            str --> str
+            Transforme le format YYYY/MM/DD en DD/MM/YYYY pour afficher proprement la date dans le tableau
+            """
+            try:
+                return datetime.strptime(date_str, "%Y/%m/%d").strftime("%d/%m/%Y")
+            except:
+                return date_str
 
         for t in trans:
-            tree.insert("", tk.END, values=(formater_date(t[0]), t[1], t[2], f"{t[3]:.2f} €"))
+            tree.insert(
+                "", tk.END, values=(formater_date(t[0]), t[1], t[2], f"{t[3]:.2f} €")
+            )
 
         actualiser_stats_categorie()
 
     cbb_compte.bind("<<ComboboxSelected>>", actualiser_affichage)
     cbb_cat.bind("<<ComboboxSelected>>", actualiser_stats_categorie)
-    cbb_tri.bind("<<ComboboxSelected>>", actualiser_affichage) 
-    
+    cbb_tri.bind("<<ComboboxSelected>>", actualiser_affichage)
+
     if liste_compte_noms:
         cbb_compte.current(0)
         actualiser_affichage()
     if categories:
         cbb_cat.set("alimentation")
         actualiser_stats_categorie()
+

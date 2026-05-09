@@ -10,14 +10,20 @@ def action_virement(
     base_de_budgets,
     id_compte,
     cle,
-    compte_dep,  
-    dest,        
+    compte_dep,
+    dest,
     montant,
     date,
     fenetre,
-    refresh
+    refresh,
 ):
-    """correspondance etre le virement graphique UI et CORE"""
+    """
+
+    dictxdictxstrxstrxstrxstrxstrxstrxfenetrexfunc --> None
+
+    Correspondance entre le virement dans la partie graphique dans UI et la logique dans le CORE.
+
+    """
 
     compte_dest = dest.get().lower().replace(" ", "_")
     somme = float(montant.get())
@@ -45,7 +51,13 @@ def action_ajouter_operation(
     fenetre,
     refresh,
 ):
-    """correspondance etre les operations graphique UI et CORE"""
+    """
+
+    dictxdictxstrxstrxstrxstrxstrxstrxstrxfenetrexfunc --> None
+
+    La fonction action_ajouter_compte() gere la correspondance entre les operations de la partie graphique dans UI et la logique dans le CORE.
+
+    """
 
     # pour selectionner le compte qu'on veut utilisera
     try:
@@ -74,11 +86,16 @@ def action_ajouter_operation(
 def action_ajouter_compte(
     base_de_donnees, base_de_budgets, id_compte, nom_cpt, montant, cle, fenetre, refresh
 ):
-    """correspondance etre l'ajout de compte graphique UI et CORE"""
+    """
+    dictxdictxstrxstrxstrxstrxfenetrexfunc --> None
+
+    La fonction action_ajouter_compte() gere la correspondance entre l'ajout de compte dans la partie graphique dans UI et la logique dans le CORE.
+
+    """
 
     nom = nom_cpt.get()
 
-    # ajouter a la mamoire
+    # ajouter a la memoire
     gestion_compte.ajouter_compte(base_de_donnees, base_de_budgets, id_compte, nom)
 
     montant_Init = montant.get()
@@ -104,10 +121,21 @@ def action_ajouter_compte(
 
 
 def virement(
-    fenetre_gestion_compte, base_de_donnees, base_de_budgets, id_compte, cle, refresh, compte_selectionne
+    fenetre_gestion_compte,
+    base_de_donnees,
+    base_de_budgets,
+    id_compte,
+    cle,
+    refresh,
+    compte_selectionne,
 ):
-    """interface graphique pour les virements inter-compte"""
-    
+    """
+    fenetrexdictxdictxstrxstrxstrxstrxfuncxstr --> None
+
+    La fonction virement() gere l'interface graphique pour les virements inter-compte.
+
+    """
+
     compte_selectionne_after = compte_selectionne.get().lower().replace(" ", "_")
     fen_virement = tk.Toplevel(fenetre_gestion_compte)
     fenetre_gestion_compte.withdraw()  # permet de faire disparaitre la fenetre mere mais jcp comment la faire reapparaitre apres ...
@@ -133,9 +161,12 @@ def virement(
     frm_depart = tk.Frame(frm_virement)
     frm_depart.pack(expand=True, anchor=tk.CENTER, padx=(40, 0), pady=(0, 20))
 
-    lbl_compte_dep = tk.Label(frm_depart, text=f"Compte de départ : {compte_selectionne.get().lower().replace("_", " ")}", font=("", 16))
+    lbl_compte_dep = tk.Label(
+        frm_depart,
+        text=f"Compte de départ : {compte_selectionne.get().lower().replace('_', ' ')}",
+        font=("", 16),
+    )
     lbl_compte_dep.pack(side=tk.LEFT, padx=(16, 0), expand=True)
-
 
     # Compte destinataire
     frm_dest = tk.Frame(frm_virement)
@@ -171,24 +202,21 @@ def virement(
             montant,
             date.today(),
             fen_virement,
-            refresh, 
+            refresh,
         ),
     ).pack(expand=True, pady=(75, 0))
 
     def annuler_virement():
         fen_virement.destroy()
-        fenetre_gestion_compte.deiconify() 
+        fenetre_gestion_compte.deiconify()
         refresh()
 
     tk.Button(
-        frm_virement, 
-        text="Annuler",
-        bg="white",
-        fg="black",
-        command=annuler_virement
-    ).pack(expand = True, pady=(10, 20))
+        frm_virement, text="Annuler", bg="white", fg="black", command=annuler_virement
+    ).pack(expand=True, pady=(10, 20))
 
     fen_virement.protocol("WM_DELETE_WINDOW", annuler_virement)
+
 
 def addop(
     fenetre_gestion_compte,
@@ -199,6 +227,13 @@ def addop(
     compte_selectionne,
     refresh,
 ):
+    """
+
+    fenetrexdictxdictxstrxstrxstrxfunc --> None
+
+    La fonction addop() gere l'interface graphique et permet de rajouter une opperation.
+
+    """
     compte_selectionne_after = compte_selectionne.get().lower().replace(" ", "_")
     fen_addop = tk.Toplevel(fenetre_gestion_compte)
     fenetre_gestion_compte.withdraw()
@@ -211,11 +246,13 @@ def addop(
 
     frm_op = tk.Frame(fen_addop)
     frm_op.pack(pady=50)
-    
+
     frm_compteselect = tk.Frame(frm_op)
     frm_compteselect.pack(anchor=tk.W, pady=20)
     tk.Label(
-        frm_compteselect, text=f"Compte selectionner : {compte_selectionne.get().lower().replace('_', ' ')}", font=("Arial", 20, "bold")
+        frm_compteselect,
+        text=f"Compte selectionner : {compte_selectionne.get().lower().replace('_', ' ')}",
+        font=("Arial", 20, "bold"),
     ).pack(side=tk.LEFT)
 
     frm_date = tk.Frame(frm_op)
@@ -266,10 +303,13 @@ def addop(
     ).pack(side=tk.LEFT)
 
     choixbud_set = {"sorties", "divers", "alimentation"}
-    if id_compte in base_de_budgets and compte_selectionne_after in base_de_budgets[id_compte]:
+    if (
+        id_compte in base_de_budgets
+        and compte_selectionne_after in base_de_budgets[id_compte]
+    ):
         for b_item in base_de_budgets[id_compte][compte_selectionne_after]:
             choixbud_set.add(b_item[0].strip().lower())
-    
+
     choixbud = sorted(list(choixbud_set))
 
     cbb_choixbud = Combobox(
@@ -316,7 +356,13 @@ def addop(
 def addcompte(
     fenetre_gestion_compte, base_de_donnees, base_de_budgets, id_compte, cle, refresh
 ):
-    """interface graphique pour ajouter un compte dans sa BDD"""
+    """
+
+    fenetrexdictxdictxstrxstrxfunc --> None
+
+    La fonction addcompte() gere l'interface graphique pour ajouter un compte dans la base de donnees.
+
+    """
 
     fen_addcompte = tk.Toplevel(fenetre_gestion_compte)
     fenetre_gestion_compte.withdraw()  # permet de faire disparaitre la fenetre mere mais jcp comment la faire reapparaitre apres ...
@@ -355,9 +401,7 @@ def addcompte(
     frm_button = tk.Frame(fen_addcompte)
     frm_button.pack(pady=20)
 
-    tk.Button(frm_button, text="Annuler", command=refresh).pack(
-        side=tk.LEFT, padx=10
-    )
+    tk.Button(frm_button, text="Annuler", command=refresh).pack(side=tk.LEFT, padx=10)
 
     tk.Button(
         frm_button,
@@ -377,10 +421,14 @@ def addcompte(
     ).pack(side=tk.LEFT, padx=10)
 
 
-def main_gestion_compte(
-    fenetre_principale, id_compte, cle, compte, blase, dir_user
-):
-    """interface graphique qui regroupe tout"""
+def main_gestion_compte(fenetre_principale, id_compte, cle, compte, blase, dir_user):
+    """
+
+    fenetrexstrxstrsxstrxstrxstr --> None
+
+    La fonction main_gestion_compte() gere l'interface graphique complette de la partie gestion de compte.
+
+    """
 
     base_de_donnees, base_de_budgets = gestion_compte.charger_donnees(dir_user, cle)
     fenetre_gestion_compte = tk.Toplevel(fenetre_principale)

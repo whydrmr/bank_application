@@ -41,3 +41,4 @@ def crypter_fichier(fichier_entree, fichier_sortie):
 
 if __name__ == "__main__":
     crypter_fichier("bank/core/compte.txt", "bank/core/compte_crypte.txt")
+
