@@ -84,13 +84,21 @@ def identification_mainloop():
 
     style.configure("Normal.TLabel", font=("Arial", 13))
 
-    style.configure("Big.TButton", font=("Arial", 12), padding=2)
+    style.configure("Big.TButton", font=("Arial", 12), padding=2, background="white")
 
     style.configure("Connect.TButton", font=("Arial", 13), padding=4)
 
     style.configure("Green.TButton", font=("Arial", 12), padding=2, background="green")
 
     style.configure("Red.TButton", font=("Arial", 12), padding=2, background="red")
+
+    style.configure(
+        "Number.TButton",
+        background="#d9d9d9",
+        foreground="black",
+        font=("Arial", 12),
+        padding=4,
+    )
 
     ttk.Label(
         identification_fenetre,
@@ -144,7 +152,7 @@ def identification_mainloop():
             ttk.Button(
                 frm_num,
                 text=str(test),
-                style="Big.TButton",
+                style="Number.TButton",
                 command=lambda c=test: ajouter_chiffre(c),
             ).grid(row=row, column=col, padx=5, pady=5)
 
@@ -157,7 +165,7 @@ def identification_mainloop():
     ttk.Button(
         frm_num,
         text=str(dernier_chiffre),
-        style="Big.TButton",
+        style="Number.TButton",
         command=lambda c=dernier_chiffre: ajouter_chiffre(c),
     ).grid(row=4, column=1, padx=5, pady=5)
 
