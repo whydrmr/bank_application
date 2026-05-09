@@ -76,8 +76,6 @@ def identification_mainloop():
     identification_fenetre.title("Banque - Connexion")
     identification_fenetre.geometry("1000x800")
 
-    identification_fenetre.tk.call("tk", "scaling", 2.0)
-
     style = ttk.Style()
 
     style.configure("Title.TLabel", font=("Arial", 18))
@@ -88,18 +86,6 @@ def identification_mainloop():
 
     style.configure("Connect.TButton", font=("Arial", 13), padding=4)
 
-    style.configure("Green.TButton", font=("Arial", 12), padding=2, background="green")
-
-    style.configure("Red.TButton", font=("Arial", 12), padding=2, background="red")
-
-    style.configure(
-        "Number.TButton",
-        background="#d9d9d9",
-        foreground="black",
-        font=("Arial", 12),
-        padding=4,
-    )
-
     ttk.Label(
         identification_fenetre,
         text="Bienvenue sur la page de connexion",
@@ -107,7 +93,7 @@ def identification_mainloop():
     ).pack(pady=75)
 
     frm_inputs = ttk.Frame(identification_fenetre)
-    frm_inputs.pack(pady=50)
+    frm_inputs.pack(pady=20)
 
     ttk.Label(frm_inputs, text="ID", style="Normal.TLabel").grid(
         row=0, column=0, padx=10
@@ -139,8 +125,9 @@ def identification_mainloop():
     chk_montrer.place(in_=entry_mdp, relx=1.0, x=30, rely=0.5, anchor="w")
 
     # bouton clavier numerique
-    frm_num = ttk.Frame(identification_fenetre)
-    frm_num.pack(pady=50)
+
+    frm_num = tk.Frame(identification_fenetre, bg="white")
+    frm_num.pack(pady=14)
 
     chiffres = list(range(10))
     random.shuffle(chiffres)
@@ -148,39 +135,40 @@ def identification_mainloop():
     for row in range(3):
         for col in range(3):
             test = chiffres.pop()
-
-            ttk.Button(
+            tk.Button(
                 frm_num,
                 text=str(test),
-                style="Number.TButton",
+                width=10,
+                height=5,
                 command=lambda c=test: ajouter_chiffre(c),
-            ).grid(row=row, column=col, padx=5, pady=5)
+            ).grid(row=row, column=col)
 
-    ttk.Button(
-        frm_num, text="Entrer", style="Green.TButton", command=se_connecter
-    ).grid(row=4, column=0, padx=5, pady=5)
+    tk.Button(
+        frm_num, text="Entrer", width=10, height=5, bg="green", command=se_connecter
+    ).grid(row=4, column=0)
 
     dernier_chiffre = chiffres.pop()
-
-    ttk.Button(
+    tk.Button(
         frm_num,
         text=str(dernier_chiffre),
-        style="Number.TButton",
+        width=10,
+        height=5,
         command=lambda c=dernier_chiffre: ajouter_chiffre(c),
-    ).grid(row=4, column=1, padx=5, pady=5)
+    ).grid(row=4, column=1)
 
-    ttk.Button(
-        frm_num, text="Effacer", style="Red.TButton", command=enlever_chiffre
-    ).grid(row=4, column=2, padx=5, pady=5)
+    tk.Button(
+        frm_num, text="Effacer", width=10, height=5, bg="red", command=enlever_chiffre
+    ).grid(row=4, column=2)
 
-    btn_connect = ttk.Button(
+    btn_connect = tk.Button(
         identification_fenetre,
-        text="Connexion",
-        style="Connect.TButton",
+        text="Connection",
+        font=("Arial", 18),
         command=se_connecter,
+        bd=2,
+        padx=20,
     )
-
-    btn_connect.pack(pady=100)
+    btn_connect.pack(pady=20)
 
     identification_fenetre.mainloop()
 
