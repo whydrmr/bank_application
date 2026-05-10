@@ -1,3 +1,4 @@
+# Cette partie est reservée uniquement pour la partie textuelle de l'application
 from gestion_compte import charger_donnees, sauvegarder_utilisateur
 
 
