@@ -48,7 +48,9 @@ sudo pacman -S tk
 # Fedora/RHEL/CentOS
 sudo dnf install python3-tkinter
 ```
-**macOS/Windows:** tkinter is included with Python from python.org **Verify installation:**
+**macOS/Windows:** tkinter is included with Python from python.org 
+
+**Verify installation:**
 ```bash
 python -m tkinter
 ```
