@@ -35,8 +35,9 @@ pip install -r requirements.txt
 
 **GUI Version (tkinter required):** 
 
-tkinter is part of Python's standard library but may need system-level installation: **Linux:**
+tkinter is part of Python's standard library but may need system-level installation: 
 
+**Linux:**
 ```bash
 # Ubuntu/Debian/Mint
 sudo apt-get install python3-tk
